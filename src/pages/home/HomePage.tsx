@@ -14,21 +14,19 @@ import { HeroBackground } from '../../components/ui/HeroBackground';
 
 export const HomePage: React.FC = () => {
   return (
-    <div className="col" style={{ gap: 48 }}>
+    <div className="col" style={{ gap: 48, width: '100%' }}>
 
       <HeroBackground>
-        <div className="container">
-          <SiteHeader embedded />
-          <Hero
-            title={<>
-              Самогочи: антистресс<br/>
-              игра прямо в браузере
-            </>}
-            subtitle="Создай персонажа, заботься о нём и вместе находите способы справляться с тревогой мягко и с улыбкой"
-            ctaHref="/game"
-            ctaText="Начать игру"
-          />
-        </div>
+        <SiteHeader embedded />
+        <Hero
+          title={<>
+            Самогочи: антистресс<br/>
+            игра прямо в браузере
+          </>}
+          subtitle="Создай персонажа, заботься о нём и вместе находите способы справляться с тревогой мягко и с улыбкой"
+          ctaHref="/game"
+          ctaText="Начать игру"
+        />
       </HeroBackground>
 
       <HowItWorks />

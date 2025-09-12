@@ -9,7 +9,7 @@ export const MainLayout: React.FC = () => {
   return (
     <div>
       {!isHome && <SiteHeader translucent={false} />}
-      <main className="container" style={isHome ? { paddingTop: 0, paddingBottom: 0 } : { paddingTop: 32, paddingBottom: 48 }}>
+      <main className={isHome ? "" : "container"} style={isHome ? { paddingTop: 0, paddingBottom: 0 } : { paddingTop: 32, paddingBottom: 48 }}>
         <Outlet />
       </main>
       <SiteFooter />

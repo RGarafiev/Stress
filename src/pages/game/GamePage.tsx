@@ -5,7 +5,7 @@ export const GamePage: React.FC = () => {
   return (
     <div style={{
       position: 'relative',
-      width: '100vw',
+      width: '100%',
       height: '100vh',
       backgroundImage: 'url("/images/hero-bg-6bfd80.png")',
       backgroundSize: 'cover',

@@ -78,7 +78,7 @@ export const HowItWorks: React.FC = () => {
             ref={subtitleRef}
             className={`how-sub fade-in-up ${subtitleShouldAnimate ? 'animate' : ''}`}
           >
-            Простые шаги, чтобы понять правила игры
+            Простые шаги, чтобы <br/> понять правила игры
           </p>
         </Col>
       </Grid>

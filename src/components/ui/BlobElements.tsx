@@ -65,6 +65,21 @@ export const BlobBehindPerson: React.FC<{ className?: string; style?: React.CSSP
   </svg>
 );
 
+// Mobile-specific smaller blob behind the person
+export const BlobBehindPersonMobile: React.FC<{ className?: string; style?: React.CSSProperties }> = ({ className = '', style }) => (
+  <svg
+    width="194"
+    height="239"
+    viewBox="0 0 194 239"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+    style={style}
+  >
+    <path d="M110.794 8.6446C45.3272 -14.9717 23.6675 12.5662 6.5306 57.7547C-10.6063 102.943 15.1554 127.339 22.2706 160.483C29.3857 193.627 79.4744 251.325 143.493 236.386C239.471 213.99 171.151 118.809 158.654 98.4868C146.156 78.1647 192.628 38.1649 110.794 8.6446Z" fill="#22D4EA"/>
+  </svg>
+);
+
 export const PersonOutline: React.FC<{ className?: string; style?: React.CSSProperties }> = ({ className = '', style }) => (
   <svg
     width="418"

@@ -116,16 +116,16 @@ export const ArticlesSection: React.FC = () => {
 
       <div ref={boxRef} className="articles-box" onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave}>
         {/* Decorative blobs */}
-        <div ref={leftLightRef} style={{ position: 'absolute', left: -120, bottom: -170, width: 650, height: 'auto', pointerEvents: 'none', zIndex: 0, transform: transforms.leftLight, transition: 'transform 300ms cubic-bezier(.2,.8,.2,1)' }}>
+        <div ref={leftLightRef} className="articles-blob articles-blob-left-light" style={{ transform: transforms.leftLight }}>
           <ArticlesBlobLeftLight style={{ width: '100%', height: 'auto' }} />
         </div>
-        <div ref={leftOutlineRef} style={{ position: 'absolute', left: -110, bottom: -120, width: 500, height: 'auto', pointerEvents: 'none', zIndex: 1, transform: transforms.leftOutline, transition: 'transform 300ms cubic-bezier(.2,.8,.2,1)' }}>
+        <div ref={leftOutlineRef} className="articles-blob articles-blob-left-outline" style={{ transform: `var(--articles-rotate-left-outline, rotate(0deg)) ${transforms.leftOutline}` }}>
           <ArticlesLeftOutline style={{ width: '100%', height: 'auto' }} />
         </div>
-        <div ref={rightLightRef} style={{ position: 'absolute', right: -70, bottom: -350, width: 540, height: 'auto', pointerEvents: 'none', zIndex: 1, transform: transforms.rightLight, transition: 'transform 300ms cubic-bezier(.2,.8,.2,1)' }}>
+        <div ref={rightLightRef} className="articles-blob articles-blob-right-light" style={{ transform: transforms.rightLight }}>
           <ArticlesRightLightBlob style={{ width: '100%', height: 'auto' }} />
         </div>
-        <div ref={rightDarkRef} style={{ position: 'absolute', right: -30, bottom: -22, width: 260, height: 'auto', pointerEvents: 'none', zIndex: 2, transform: transforms.rightDark, transition: 'transform 300ms cubic-bezier(.2,.8,.2,1)' }}>
+        <div ref={rightDarkRef} className="articles-blob articles-blob-right-dark" style={{ transform: transforms.rightDark }}>
           <ArticlesBlobRightDark style={{ width: '100%', height: 'auto' }} />
         </div>
 
