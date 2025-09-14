@@ -1143,6 +1143,9 @@ header {
   .footer-blob-left-svg { position: absolute; left: -100px; bottom: -20px; }
   .footer-blob-center-svg { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 3; width: 420px; height: auto; }
   .footer-blob-right-svg { position: absolute; right: -100px; bottom: -20px; z-index: 1; }
+  /* Mobile-only blobs (hidden by default) */
+  .footer-blob-left-mobile { display: none; position: absolute; left: -60px; bottom: -30px; z-index: 0; }
+  .footer-blob-right-mobile { display: none; position: absolute; right: -20px; bottom: -20px; z-index: 2; }
 
 /* Footer responsive */
 @media (max-width: 1024px) {
@@ -1163,11 +1166,25 @@ header {
 }
 
 @media (max-width: 480px) {
-  .footer { margin-top: 40px; min-height: 150px; padding: 16px 0; }
-  .footer-inner { gap: 16px; }
-  .footer-nav { font-size: 14px; }
-  .footer-brand { font-size: 14px; }
-  .footer-blob-center-svg { width: 200px; }
+  .footer { margin-top: 150px; min-height: 150px; padding: 16px 0; overflow: visible; }
+  .footer-inner { 
+    gap: 16px; 
+    flex-direction: row; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+  }
+  .footer-nav { font-size: 16px; }
+  .footer-brand { font-size: 14px; text-align: right; margin-top: 26px; }
+  /* Footer logo size on mobile */
+  .footer-brand svg { width: 81px; height: 37px; }
+  .footer-blob-center-svg { display: none; }
+  /* Hide desktop blobs, show mobile ones */
+  .footer-blob-left-svg, .footer-blob-right-svg { display: none; }
+  .footer-blob-left-mobile, .footer-blob-right-mobile { display: block; }
+  .footer-blobs-inner { width: 100%; }
+  /* Mobile blob sizing/position to avoid cropping */
+  .footer-blob-left-mobile { left: -80px; bottom: -20px; width: 420px; height: auto; }
+  .footer-blob-right-mobile { right: -40px; bottom: -20px; width: 210px; height: auto; }
 }
 
 

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { useModal } from '../../app/providers/ModalProvider';
 import { Button } from '../ui/Button';
-import { LogoSvg, LogoSvgMobile } from '../ui/LogoSvg';
+import { LogoSvg } from '../ui/LogoSvg';
 import { BurgerMenu } from '../ui/BurgerMenu';
 
 type Props = { translucent?: boolean; embedded?: boolean };
@@ -19,7 +19,6 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
         <div className="nav-logo">
           <Link to="/" className="logo-link" aria-label="Stresshelp">
             <span className="logo-desktop"><LogoSvg /></span>
-            <span className="logo-mobile"><LogoSvgMobile /></span>
           </Link>
         </div>
         <div className="nav-center">
