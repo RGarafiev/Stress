@@ -28,7 +28,7 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
           <a href="#blog" className="nav-chip">Статьи</a>
         </div>
         <div className="nav-right">
-          <Button variant="try-now" onClick={() => navigate('/game')}>Попробовать сейчас</Button>
+          <Button variant="try-now" onClick={() => open('login')}>Попробовать сейчас</Button>
         </div>
         <BurgerMenu />
       </div>

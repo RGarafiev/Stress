@@ -3,8 +3,10 @@ import { Grid, Col } from '../../components/ui/Grid';
 import { Button } from '../../components/ui/Button';
 import { BlobBehindPerson, BlobBehindPersonMobile, PersonOutline, AboutLightBlob } from '../../components/ui/BlobElements';
 import { useFadeIn } from '../../hooks/useFadeIn';
+import { useModal } from '../../app/providers/ModalProvider';
 
 export const AboutSection: React.FC = () => {
+  const { open } = useModal();
   const { elementRef: labelRef, shouldAnimate: labelShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 0 });
   const { elementRef: titleRef, shouldAnimate: titleShouldAnimate } = useFadeIn<HTMLHeadingElement>({ delay: 200 });
   const { elementRef: subtitleRef, shouldAnimate: subtitleShouldAnimate } = useFadeIn<HTMLParagraphElement>({ delay: 400 });
@@ -16,14 +18,14 @@ export const AboutSection: React.FC = () => {
       light: { dx: -80, dy: -20, rotate: 0, width: 400, height: 270 },
       lightScale: 0.25,
       behind: { dx: 60, dy: 180, rotate: 0 },
-      behindScale: 0.65,
+      behindScale: 0.72,
       outline: { dx: 0, dy: 0, rotate: 6 },
     },
     phone: {
       light: { dx: 20, dy: -16, rotate: 0, width: 600, height: 400 },
       lightScale: 1.4,
       behind: { dx: -35, dy: -40, rotate: 0 },
-      behindScale: 0.6,
+      behindScale: 0.66,
       outline: { dx: -9, dy: 4, rotate: 6 },
     },
   } as const;
@@ -112,7 +114,13 @@ export const AboutSection: React.FC = () => {
             ref={buttonRef}
             className={`fade-in-up ${buttonShouldAnimate ? 'animate' : ''}`}
           >
-            <Button variant="game" className="about-cta">Погрузиться в мир</Button>
+            <Button 
+              variant="game" 
+              className="about-cta"
+              onClick={() => open('login')}
+            >
+              Погрузиться в мир
+            </Button>
           </div> 
         </Col>
       </Grid>

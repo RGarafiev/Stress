@@ -8,9 +8,10 @@ type Props = {
   subtitle: string;
   ctaHref: string;
   ctaText: string;
+  onCtaClick?: () => void;
 };
 
-export const Hero: React.FC<Props> = ({ title, subtitle, ctaHref, ctaText }) => {
+export const Hero: React.FC<Props> = ({ title, subtitle, ctaHref, ctaText, onCtaClick }) => {
   const { elementRef: titleRef, shouldAnimate: titleShouldAnimate } = useFadeIn<HTMLHeadingElement>({ delay: 0, immediate: true });
   const { elementRef: subtitleRef, shouldAnimate: subtitleShouldAnimate } = useFadeIn<HTMLParagraphElement>({ delay: 300, immediate: true });
   const { elementRef: buttonRef, shouldAnimate: buttonShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 600, immediate: true });
@@ -34,7 +35,11 @@ export const Hero: React.FC<Props> = ({ title, subtitle, ctaHref, ctaText }) => 
         className={`fade-in-up ${buttonShouldAnimate ? 'animate' : ''}`}
         style={{ marginTop: 24 }}
       >
-        <Link to={ctaHref}><Button variant="game">{ctaText}</Button></Link>
+        {onCtaClick ? (
+          <Button variant="game" onClick={onCtaClick}>{ctaText}</Button>
+        ) : (
+          <Link to={ctaHref}><Button variant="game">{ctaText}</Button></Link>
+        )}
       </div>
     </section>
   );
