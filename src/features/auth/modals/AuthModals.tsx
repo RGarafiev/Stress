@@ -207,16 +207,21 @@ export const AuthModals: React.FC = () => {
             {/* Submit */}
             <Button
               onClick={async () => {
-                if (tab==='login') {
-                  await auth.signIn(email, password);
-                  push('Добро пожаловать!', 'success');
-                } else {
-                  if (password !== confirmPassword) { push('Пароли не совпадают', 'error'); return; }
-                  await auth.signUp(email, password);
-                  push('Письмо с подтверждением отправлено', 'info');
-                  open('confirm-email');
+                try {
+                  if (tab==='login') {
+                    await auth.signIn(email, password, remember);
+                    push('Добро пожаловать!', 'success');
+                  } else {
+                    if (!fullName.trim()) { push('Введите имя', 'error'); return; }
+                    if (password !== confirmPassword) { push('Пароли не совпадают', 'error'); return; }
+                    await auth.signUp({ name: fullName.trim(), email, password, passwordConfirmation: confirmPassword, remember });
+                    push('Регистрация выполнена', 'success');
+                  }
+                  close();
+                } catch (e: any) {
+                  const msg = e?.message || 'Ошибка запроса';
+                  push(msg, 'error');
                 }
-                close();
               }}
               style={{ background:'#ffffff', color:'#111827', borderRadius: 10, height: 44, fontFamily:'Comfortaa', fontWeight: 600 }}
             >{tab==='login' ? 'Войти' : 'Создать аккаунт'}</Button>
@@ -233,7 +238,15 @@ export const AuthModals: React.FC = () => {
           <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} />
           <Input label="Пароль" type="password" value={password} onChange={e => setPassword(e.target.value)} />
           <div className="row" style={{ justifyContent: 'flex-end' }}>
-            <Button onClick={async () => { await auth.signUp(email, password); push('Письмо с подтверждением отправлено', 'info'); open('confirm-email'); }}>Создать аккаунт</Button>
+            <Button onClick={async () => {
+              try {
+                await auth.signUp({ name: (fullName || email.split('@')[0] || 'User').trim(), email, password, passwordConfirmation: password });
+                push('Регистрация выполнена', 'success');
+                close();
+              } catch (e: any) {
+                push(e?.message || 'Ошибка регистрации', 'error');
+              }
+            }}>Создать аккаунт</Button>
           </div>
         </div>
       </Modal>
