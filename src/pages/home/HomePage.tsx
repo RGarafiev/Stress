@@ -4,6 +4,8 @@ import { Grid, Col } from '../../components/ui/Grid';
 import { Card } from '../../components/ui/Card';
 import { Link } from 'react-router-dom';
 import { Hero } from '../../components/sections/Hero';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import { useModal } from '../../app/providers/ModalProvider';
 import { SiteHeader } from '../../components/shared/SiteHeader';
 import { HowItWorks } from './HowItWorks';
@@ -15,6 +17,8 @@ import { HeroBackground } from '../../components/ui/HeroBackground';
 
 export const HomePage: React.FC = () => {
   const { open } = useModal();
+  const { user, ensureAuthenticated } = useAuth();
+  const navigate = useNavigate();
   return (
     <div className="col" style={{ gap: 48, width: '100%' }}>
 
@@ -28,7 +32,10 @@ export const HomePage: React.FC = () => {
           subtitle="Создай персонажа, заботься о нём и вместе находите способы справляться с тревогой мягко и с улыбкой"
           ctaHref="/game"
           ctaText="Начать игру"
-          onCtaClick={() => open('login')}
+          onCtaClick={async () => {
+            const ok = user ? true : await ensureAuthenticated();
+            if (ok) navigate('/game', { state: { entry: 'cta' } }); else open('login');
+          }}
         />
       </HeroBackground>
 

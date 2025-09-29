@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { login as apiLogin, register as apiRegister, logout as apiLogout } from '../api/auth';
+import { requestRefresh } from '../api/client';
 import { clearSession, getEmail, getToken, saveSession } from '../auth/session';
 
 export type User = {
@@ -15,6 +16,7 @@ export type AuthContextValue = {
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   confirmEmail: (code: string) => Promise<void>;
+  ensureAuthenticated: () => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -75,7 +77,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     },
     async requestPasswordReset(_email) { /* Not implemented on API spec */ },
-    async confirmEmail(_code) { /* Not implemented on API spec */ }
+    async confirmEmail(_code) { /* Not implemented on API spec */ },
+    async ensureAuthenticated() {
+      if (getToken()) return true;
+      const newToken = await requestRefresh();
+      if (newToken) {
+        const email = getEmail();
+        setUser(prev => prev || (email ? { id: 'self', email } : { id: 'self', email: 'user@example.com' }));
+        return true;
+      }
+      return false;
+    }
   }), [user, isLoading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

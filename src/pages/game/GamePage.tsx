@@ -1,7 +1,93 @@
-import React from 'react';
-import { Button } from '../../components/ui/Button';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Unity, useUnityContext } from 'react-unity-webgl';
+import { useModal } from '../../app/providers/ModalProvider';
+import { getToken } from '../../app/auth/session';
+import { SiteHeader } from '../../components/shared/SiteHeader';
 
 export const GamePage: React.FC = () => {
+  const { user, ensureAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { open } = useModal();
+
+  // Gate entry: only allow when navigated from CTA with state.entry === 'cta'
+  useEffect(() => {
+    const cameFromCta = (location.state as any)?.entry === 'cta';
+    if (!cameFromCta) {
+      navigate('/', { replace: true });
+      return;
+    }
+    const check = async () => {
+      if (!user) {
+        const ok = await ensureAuthenticated();
+        if (!ok) {
+          open('login');
+          navigate('/', { replace: true });
+        }
+      }
+    };
+    void check();
+  }, [user, navigate, open, ensureAuthenticated, location.state]);
+
+  if (!user) return null;
+
+  return <GameCanvas />;
+};
+
+const GameCanvas: React.FC = () => {
+  const [headerHeight, setHeaderHeight] = useState<number>(0);
+  const initialToken = getToken();
+  const unityConfig = {
+    loaderUrl: '/Game/Build/Build.loader.js',
+    dataUrl: '/Game/Build/Build.data',
+    frameworkUrl: '/Game/Build/Build.framework.js',
+    codeUrl: '/Game/Build/Build.wasm',
+    streamingAssetsUrl: '/Game/StreamingAssets',
+    companyName: 'DefaultCompany',
+    productName: 'Samogochi',
+    productVersion: '0.1',
+    // Pass JWT as a Unity command-line argument (read via Environment.GetCommandLineArgs())
+    arguments: initialToken ? [`--jwt=${initialToken}`] : [],
+  } as any;
+
+  const { unityProvider, loadingProgression, isLoaded, sendMessage, addEventListener, removeEventListener } = useUnityContext(unityConfig);
+
+  const progressPercent = useMemo(() => Math.round((loadingProgression || 0) * 100), [loadingProgression]);
+
+  useEffect(() => {
+    if (!isLoaded) return;
+    const token = getToken();
+    if (token) {
+      try { sendMessage('AuthBridge', 'ReceiveToken', token); } catch {}
+    }
+    const handleRequest = () => {
+      const t = getToken();
+      if (t) {
+        try { sendMessage('AuthBridge', 'ReceiveToken', t); } catch {}
+      }
+    };
+    addEventListener('RequestAuthToken', handleRequest);
+    return () => { removeEventListener('RequestAuthToken', handleRequest); };
+  }, [isLoaded, sendMessage, addEventListener, removeEventListener]);
+
+  // disable body scroll while on game page
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
+  // measure header height to place canvas exactly below it
+  useEffect(() => {
+    const el = document.getElementById('game-header');
+    const update = () => setHeaderHeight(el ? Math.ceil(el.getBoundingClientRect().height) : 0);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
   return (
     <div style={{
       position: 'relative',
@@ -10,7 +96,6 @@ export const GamePage: React.FC = () => {
       backgroundImage: 'url("/images/hero-bg-6bfd80.png")',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      borderRadius: '0 0 30px 30px',
       overflow: 'hidden'
     }}>
       {/* Dark overlay */}
@@ -24,126 +109,31 @@ export const GamePage: React.FC = () => {
         borderRadius: '0 0 30px 30px'
       }} />
       
-      {/* Header */}
-      <div style={{
-        position: 'relative',
-        zIndex: 10,
-        padding: '60px 40px 24px'
-      }}>
-        <div style={{
-          maxWidth: '1530px',
-          margin: '0 auto',
-          padding: '10px 40px',
-          background: 'rgba(255, 255, 255, 0.15)',
-          borderRadius: '22px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          minHeight: '60px'
-        }}>
-          <nav style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <a href="#" style={{
-              color: '#000000',
-              fontFamily: 'Comfortaa, sans-serif',
-              fontSize: '16px',
-              textDecoration: 'none'
-            }}>Главная</a>
-            <a href="#" style={{
-              color: '#000000',
-              fontFamily: 'Comfortaa, sans-serif',
-              fontSize: '16px',
-              textDecoration: 'none'
-            }}>Правила</a>
-            <a href="#" style={{
-              color: '#000000',
-              fontFamily: 'Comfortaa, sans-serif',
-              fontSize: '16px',
-              textDecoration: 'none'
-            }}>Миссия игры</a>
-            <a href="#" style={{
-              color: '#000000',
-              fontFamily: 'Comfortaa, sans-serif',
-              fontSize: '16px',
-              textDecoration: 'none'
-            }}>Статьи</a>
-          </nav>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <button style={{
-              background: '#000000',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '100px',
-              fontFamily: 'Comfortaa, sans-serif',
-              fontWeight: 600,
-              fontSize: '20px',
-              height: '60px',
-              padding: '20px 50px',
-              cursor: 'pointer'
-            }}>Попробовать сейчас</button>
-            <img src="/images/logo-header.svg" alt="stress help" style={{ width: '132px', height: '60px' }} />
-          </div>
-        </div>
+      {/* Fixed Navbar */}
+      <div id="game-header" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20 }}>
+        <SiteHeader embedded />
       </div>
       
-      {/* Main Content */}
+      {/* Main Content: Unity canvas */}
       <div style={{
-        position: 'relative',
+        position: 'absolute',
+        top: headerHeight,
+        bottom: 0,
+        left: 0,
+        right: 0,
         zIndex: 5,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        flex: 1,
         textAlign: 'center',
         color: '#ffffff',
-        padding: '0 40px'
+        padding: 0
       }}>
-        <div>
-          <h1 style={{
-            fontFamily: 'Comfortaa, sans-serif',
-            fontWeight: 400,
-            fontSize: '64px',
-            lineHeight: '0.84375em',
-            letterSpacing: '-0.03125em',
-            margin: '0 0 24px 0'
-          }}>
-            Самогочи: антистресс<br/>
-            игра прямо в браузере
-          </h1>
-          <p style={{
-            fontFamily: 'Comfortaa, sans-serif',
-            fontWeight: 400,
-            fontSize: '20px',
-            lineHeight: '1.1em',
-            letterSpacing: '-0.025em',
-            color: 'rgba(255, 255, 255, 0.6)',
-            margin: '0 0 48px 0'
-          }}>
-            Создай персонажа, заботься о нём и вместе находите способы<br/>
-            справляться с тревогой мягко и с улыбкой
-          </p>
-          <button style={{
-            background: '#22D4EA',
-            color: '#ffffff',
-            border: 'none',
-            borderRadius: '35px',
-            fontFamily: 'Comfortaa, sans-serif',
-            fontWeight: 600,
-            fontSize: '20px',
-            height: '60px',
-            padding: '20px 50px',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'transparent';
-            e.currentTarget.style.border = '1px dashed #22D4EA';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#22D4EA';
-            e.currentTarget.style.border = 'none';
-          }}>
-            Начать игру
-          </button>
+        <div style={{ width: '100%', height: '100%', margin: 0 }}>
+          {!isLoaded && (
+            <div style={{ marginBottom: 12, color: 'rgba(255,255,255,0.8)' }}>Загрузка игры: {progressPercent}%</div>
+          )}
+          <Unity unityProvider={unityProvider} style={{ width: '100%', height: '100%', background: '#000' }} />
         </div>
       </div>
     </div>
