@@ -5,6 +5,7 @@ import { Unity, useUnityContext } from 'react-unity-webgl';
 import { useModal } from '../../app/providers/ModalProvider';
 import { getToken } from '../../app/auth/session';
 import { SiteHeader } from '../../components/shared/SiteHeader';
+import {BASENAME} from "../../index";
 
 export const GamePage: React.FC = () => {
   const { user, ensureAuthenticated } = useAuth();
@@ -40,11 +41,11 @@ const GameCanvas: React.FC = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   const initialToken = getToken();
   const unityConfig = {
-    loaderUrl: '/Game/Build/Build.loader.js',
-    dataUrl: '/Game/Build/Build.data',
-    frameworkUrl: '/Game/Build/Build.framework.js',
-    codeUrl: '/Game/Build/Build.wasm',
-    streamingAssetsUrl: '/Game/StreamingAssets',
+    loaderUrl: `${BASENAME}/stress_game/Build/Build.loader.js`,
+    dataUrl: `${BASENAME}/stress_game/Build/Build.data`,
+    frameworkUrl: `${BASENAME}/stress_game/Build/Build.framework.js`,
+    codeUrl: `${BASENAME}/stress_game/Build/Build.wasm`,
+    streamingAssetsUrl: `${BASENAME}/stress_game/StreamingAssets`,
     companyName: 'DefaultCompany',
     productName: 'Samogochi',
     productVersion: '0.1',
@@ -74,6 +75,7 @@ const GameCanvas: React.FC = () => {
 
   // disable body scroll while on game page
   useEffect(() => {
+    window.scrollTo({left: 0, top: 0, behavior: "auto"});
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => { document.body.style.overflow = prev; };
@@ -93,7 +95,7 @@ const GameCanvas: React.FC = () => {
       position: 'relative',
       width: '100%',
       height: '100vh',
-      backgroundImage: 'url("/images/hero-bg-6bfd80.png")',
+      backgroundImage: `url("${BASENAME}/images/hero-bg-6bfd80.png")`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       overflow: 'hidden'
@@ -117,7 +119,8 @@ const GameCanvas: React.FC = () => {
       {/* Main Content: Unity canvas */}
       <div style={{
         position: 'absolute',
-        top: headerHeight,
+        top: 0,
+        // top: headerHeight,
         bottom: 0,
         left: 0,
         right: 0,
@@ -131,7 +134,13 @@ const GameCanvas: React.FC = () => {
       }}>
         <div style={{ width: '100%', height: '100%', margin: 0 }}>
           {!isLoaded && (
-            <div style={{ marginBottom: 12, color: 'rgba(255,255,255,0.8)' }}>Загрузка игры: {progressPercent}%</div>
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              color: 'rgba(255,255,255,0.8)' }}>Загрузка игры: {progressPercent}%</div>
           )}
           <Unity unityProvider={unityProvider} style={{ width: '100%', height: '100%', background: '#000' }} />
         </div>
