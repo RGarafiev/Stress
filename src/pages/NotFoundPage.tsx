@@ -4,6 +4,7 @@ import { SiteHeader } from '../components/shared/SiteHeader';
 import { SiteFooter } from '../components/shared/SiteFooter';
 import { Link } from 'react-router-dom';
 import { useFadeIn } from '../hooks/useFadeIn';
+import {BASENAME} from "../index";
 
 export const NotFoundPage: React.FC = () => {
   const { elementRef: titleRef, shouldAnimate: titleShouldAnimate } = useFadeIn<HTMLHeadingElement>({ delay: 0, immediate: true });
@@ -11,7 +12,7 @@ export const NotFoundPage: React.FC = () => {
   const { elementRef: buttonRef, shouldAnimate: buttonShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 600, immediate: true });
 
   const bgStyle: React.CSSProperties = {
-    background: `linear-gradient(rgba(13, 13, 13, 0.65), rgba(13, 13, 13, 0.65)), url('/images/404-bg-18b585.png')`,
+    background: `linear-gradient(rgba(13, 13, 13, 0.65), rgba(13, 13, 13, 0.65)), url('${BASENAME}/images/404-bg-18b585.png')`,
   };
 
   return (

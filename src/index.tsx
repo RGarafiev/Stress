@@ -8,9 +8,11 @@ import './styles/globals.css';
 const rootElement = document.getElementById('root') as HTMLElement;
 const root = createRoot(rootElement);
 
+export const BASENAME = process.env.PUBLIC_URL;
+
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <BrowserRouter basename={BASENAME}>
       <AppProviders>
         <App />
       </AppProviders>

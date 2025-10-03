@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { BlobBehindPerson, BlobBehindPersonMobile, PersonOutline, AboutLightBlob } from '../../components/ui/BlobElements';
 import { useFadeIn } from '../../hooks/useFadeIn';
 import { useModal } from '../../app/providers/ModalProvider';
+import {BASENAME} from "../../index";
 
 export const AboutSection: React.FC = () => {
   const { open } = useModal();
@@ -82,7 +83,7 @@ export const AboutSection: React.FC = () => {
 
             {/* Портрет */}
             <img 
-              src="/images/person-photo-23b545.png" 
+              src={`${BASENAME}/images/person-photo-23b545.png`}
               alt="Человек в костюме" 
               className="about-person-image"
             />

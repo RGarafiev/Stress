@@ -2,6 +2,7 @@
   "name": "giga-job",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/stresshelp",
   "dependencies": {
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
@@ -42,6 +43,10 @@
   "devDependencies": {
     "@types/react": "^18.3.24",
     "@types/react-dom": "^18.3.7",
-    "typescript": "^5.9.2"
-  }
+    "typescript": "^4.9.5"
+  },
+  "description": "This is a TypeScript React app scaffolded to match the landing + game + legal pages spec. No packages were installed here; install your preferred router/types tooling when ready.",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC"
 }
