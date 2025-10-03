@@ -59,17 +59,21 @@ export const Button: React.FC<Props> = ({ variant = 'default', size = 'md', styl
     },
     'try-now': {
       background: '#ffffff',
-      color: '#000000',
+      color: '#121212',
       borderColor: 'transparent',
       borderRadius: '100px',
       fontFamily: 'Comfortaa, sans-serif',
       fontWeight: 600,
-      fontSize: '20px',
-      lineHeight: '1.085em',
-      letterSpacing: '-0.025em',
+      fontSize: '22px',
+      lineHeight: '24px',
+      letterSpacing: '-0.5px',
       height: '60px',
       padding: '20px 50px',
-      border: 'none'
+      border: 'none',
+      display: 'inline-flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      textAlign: 'center'
     }
   };
   

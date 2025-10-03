@@ -5,7 +5,9 @@ export type ModalId =
   | 'register'
   | 'reset-password'
   | 'confirm-email'
-  | 'profile';
+  | 'profile'
+  | 'signup-info'
+  | 'reset-info';
 
 export type ModalContextValue = {
   open: (id: ModalId) => void;
@@ -13,6 +15,8 @@ export type ModalContextValue = {
   isOpen: (id?: ModalId) => boolean;
   current: ModalId | null;
 };
+
+export const RESET_INFO_MODAL_ID: ModalId = 'reset-info';
 
 const ModalContext = createContext<ModalContextValue | null>(null);
 

@@ -66,15 +66,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     },
     async signOut() {
       setIsLoading(true);
-      try {
-        await apiLogout();
-      } catch {
-        // ignore logout errors
-      } finally {
-        clearSession();
-        setUser(null);
-        setIsLoading(false);
-      }
+      apiLogout().catch(() => {});
+      clearSession();
+      setUser(null);
+      setIsLoading(false);
     },
     async requestPasswordReset(_email) { /* Not implemented on API spec */ },
     async confirmEmail(_code) { /* Not implemented on API spec */ },

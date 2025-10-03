@@ -22,7 +22,8 @@ export class ApiError extends Error {
   }
 }
 
-const API_BASE_URL = (process.env.REACT_APP_API_BASE_URL || '').replace(/\/+$/, '');
+// Always target production API for now to avoid CORS/redirect issues with IP/http or local backend absence
+const API_BASE_URL = 'https://stressapi.ru/api';
 const REFRESH_ENDPOINT = '/auth/refresh';
 
 async function doFetch<T>(path: string, init: RequestInit = {}): Promise<{ res: Response; json: ApiEnvelope<T> | null }> {

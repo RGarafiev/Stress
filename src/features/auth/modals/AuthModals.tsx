@@ -3,8 +3,10 @@ import { Modal } from '../../../components/ui/Modal';
 import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
 import { useModal } from '../../../app/providers/ModalProvider';
+import { RESET_INFO_MODAL_ID } from '../../../app/providers/ModalProvider';
 import { useAuth } from '../../../app/providers/AuthProvider';
 import { useToast } from '../../../app/providers/ToastProvider';
+import { ApiError } from '../../../app/api/client';
 
 export const AuthModals: React.FC = () => {
   const { current, close, open } = useModal();
@@ -20,6 +22,42 @@ export const AuthModals: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
 
+  // Inline validation error states
+  const [loginEmailError, setLoginEmailError] = useState<string | null>(null);
+  const [loginPasswordError, setLoginPasswordError] = useState<string | null>(null);
+  const [regNameError, setRegNameError] = useState<string | null>(null);
+  const [regEmailError, setRegEmailError] = useState<string | null>(null);
+  const [regPasswordError, setRegPasswordError] = useState<string | null>(null);
+  const [regConfirmError, setRegConfirmError] = useState<string | null>(null);
+  const [resetEmailError, setResetEmailError] = useState<string | null>(null);
+
+  const emailError = (value: string): string | null => {
+    if (!value.trim()) return 'Введите email';
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    return re.test(value) ? null : 'Введите корректный email';
+  };
+
+  const passwordError = (value: string): string | null => {
+    if (!value) return 'Введите пароль';
+    const checks: Array<{ ok: boolean; msg: string }> = [
+      { ok: value.length >= 8, msg: 'Минимум 8 символов' },
+      { ok: /[a-z]/.test(value), msg: 'Минимум 1 строчная буква (a-z)' },
+      { ok: /[A-Z]/.test(value), msg: 'Минимум 1 заглавная буква (A-Z)' },
+      { ok: /[0-9]/.test(value), msg: 'Минимум 1 цифра (0-9)' },
+      { ok: /[@$!%*?&]/.test(value), msg: 'Минимум 1 специальный символ (@$!%*?&)' },
+    ];
+    const failed = checks.filter(c => !c.ok).map(c => c.msg);
+    return failed.length ? failed.join('. ') : null;
+  };
+
+  const getPasswordChecks = (value: string) => ({
+    len: value.length >= 8,
+    lower: /[a-z]/.test(value),
+    upper: /[A-Z]/.test(value),
+    digit: /[0-9]/.test(value),
+    special: /[@$!%*?&]/.test(value),
+  });
+
   const resetFields = () => { setEmail(''); setPassword(''); setConfirmPassword(''); setFullName(''); };
 
   return (
@@ -29,7 +67,7 @@ export const AuthModals: React.FC = () => {
         onClose={() => { close(); resetFields(); }}
         contentStyle={{ background:'transparent', border:'none', boxShadow:'none', padding: 0 }}
       >
-        <div style={{ background:'#121212', color:'#ffffff', padding: 24, borderRadius: 20, width: 485, maxWidth: 'calc(100vw - 32px)' }}>
+        <div style={{ background:'#121212', color:'#ffffff', padding: 24, borderRadius: 20, width: 560, maxWidth: 'calc(100vw - 32px)' }}>
           {/* Tabs */}
           <div style={{ display:'flex', alignItems:'center', gap: 12, marginBottom: 16 }}>
             <button onClick={() => { setTab('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }} style={{ background:'transparent', border:'none', color: tab==='login'?'#ffffff':'#9ca3af', fontFamily:'Comfortaa', fontSize: 16, cursor:'pointer' }}>Вход</button>
@@ -38,59 +76,69 @@ export const AuthModals: React.FC = () => {
           </div>
 
           {/* Form content varies by tab */}
-          <div key={tab} style={{ display:'flex', flexDirection:'column', gap: 12 }}>
+          <div key={tab} style={{ display:'flex', flexDirection:'column', gap: 24 }}>
             {tab === 'login' ? (
               <>
                 {/* Email */}
-                <div className="auth-field" style={{ position:'relative' }}>
-                  <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Email</span>
-                  <input
-                    value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="email@example.com"
-                    className="auth-input"
-                    type="email"
-                    style={{
-                      width:'100%', height: 48, border:'none', background:'transparent',
-                      color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
-                      outline:'none'
-                    }}
-                    inputMode="email"
-                    name="auth-email-login"
-                    autoComplete="off"
-                    autoCorrect="off"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                  />
-                  {/* Mail icon */}
-                  <span style={{ position:'absolute', right: 10, top: '50%', transform:'translateY(-50%)', opacity: .85 }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="#BDBDBD" strokeWidth="2"/><path d="M22 6l-10 7L2 6" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  </span>
+                <div className="field-wrap" style={{ display:'flex', flexDirection:'column', gap: 6 }}>
+                  <div className="auth-field" style={{ position:'relative' }}>
+                    <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Email</span>
+                    <input
+                      value={email}
+                      onChange={e => { setEmail(e.target.value); setLoginEmailError(null); setLoginPasswordError(null); }}
+                      placeholder="email@example.com"
+                      className="auth-input"
+                      type="email"
+                      style={{
+                        width:'100%', height: 48, border:'none', background:'transparent',
+                        color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
+                        outline:'none'
+                      }}
+                      inputMode="email"
+                      name="auth-email-login"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                    />
+                    {/* Mail icon */}
+                    <span style={{ position:'absolute', right: 10, top: '50%', transform:'translateY(-50%)', opacity: .85 }}>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="#BDBDBD" strokeWidth="2"/><path d="M22 6l-10 7L2 6" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    </span>
+                  </div>
+                  {loginEmailError && (
+                    <span style={{ color:'#ef4444', fontSize: 12 }}>{loginEmailError}</span>
+                  )}
                 </div>
 
                 {/* Password */}
-                <div className="auth-field" style={{ position:'relative' }}>
-                  <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Пароль</span>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="auth-input"
-                    style={{
-                      width:'100%', height: 48, border:'none', background:'transparent',
-                      color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
-                      outline:'none'
-                    }}
-                    name="current-password"
-                    autoComplete="current-password"
-                  />
-                  <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
-                    {showPassword ? (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a19.87 19.87 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.86 19.86 0 0 1-3.87 5.14M14.12 9.88a3 3 0 1 1-4.24 4.24" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="#ffffff" strokeWidth="2"/></svg>
-                    ) : (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
-                    )}
-                  </button>
+                <div className="field-wrap" style={{ display:'flex', flexDirection:'column', gap: 6 }}>
+                  <div className="auth-field" style={{ position:'relative' }}>
+                    <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Пароль</span>
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={e => { setPassword(e.target.value); setLoginPasswordError(null); }}
+                      className="auth-input"
+                      style={{
+                        width:'100%', height: 48, border:'none', background:'transparent',
+                        color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
+                        outline:'none'
+                      }}
+                      name="current-password"
+                      autoComplete="current-password"
+                    />
+                    <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
+                      {showPassword ? (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a19.87 19.87 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.86 19.86 0 0 1-3.87 5.14M14.12 9.88a3 3 0 1 1-4.24 4.24" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="#ffffff" strokeWidth="2"/></svg>
+                      ) : (
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
+                      )}
+                    </button>
+                  </div>
+                  {loginPasswordError && (
+                    <span style={{ color:'#ef4444', fontSize: 12 }}>{loginPasswordError}</span>
+                  )}
                 </div>
 
                 {/* Remember me */}
@@ -124,6 +172,9 @@ export const AuthModals: React.FC = () => {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4" stroke="#BDBDBD" strokeWidth="2"/><path d="M5.5 21a8.5 8.5 0 0 1 13 0" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round"/></svg>
                   </span>
                 </div>
+                {regNameError && (
+                  <span style={{ color:'#ef4444', fontSize: 12 }}>{regNameError}</span>
+                )}
 
                 {/* Email */}
                 <div className="auth-field" style={{ position:'relative' }}>
@@ -151,6 +202,9 @@ export const AuthModals: React.FC = () => {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" stroke="#BDBDBD" strokeWidth="2"/><path d="M22 6l-10 7L2 6" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   </span>
                 </div>
+                {regEmailError && (
+                  <span style={{ color:'#ef4444', fontSize: 12 }}>{regEmailError}</span>
+                )}
 
                 {/* Password */}
                 <div className="auth-field" style={{ position:'relative' }}>
@@ -175,6 +229,27 @@ export const AuthModals: React.FC = () => {
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
                     )}
                   </button>
+                </div>
+                {/* Password checklist under the field */}
+                <div style={{ marginTop: 6, marginLeft: 14, color:'#9ca3af', fontSize: 12, lineHeight: 1.4 }}>
+                  {(() => {
+                    const c = getPasswordChecks(password);
+                    const Item: React.FC<{ ok: boolean; text: string }> = ({ ok, text }) => (
+                      <div style={{ display:'flex', alignItems:'center', gap: 6, color: ok ? '#10b981' : '#ef4444' }}>
+                        <span>{ok ? '✔' : '✖'}</span>
+                        <span>{text}</span>
+                      </div>
+                    );
+                    return (
+                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', columnGap: 16, rowGap: 4 }}>
+                        <Item ok={c.len} text="Минимум 8 символов" />
+                        <Item ok={c.lower} text="1 строчная буква (a-z)" />
+                        <Item ok={c.upper} text="1 заглавная буква (A-Z)" />
+                        <Item ok={c.digit} text="1 цифра (0-9)" />
+                        <Item ok={c.special} text="1 спецсимвол (@$!%*?&)" />
+                      </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Confirm password */}
@@ -201,6 +276,9 @@ export const AuthModals: React.FC = () => {
                     )}
                   </button>
                 </div>
+                {regConfirmError && (
+                  <span style={{ color:'#ef4444', fontSize: 12 }}>{regConfirmError}</span>
+                )}
               </>
             )}
 
@@ -209,16 +287,38 @@ export const AuthModals: React.FC = () => {
               onClick={async () => {
                 try {
                   if (tab==='login') {
+                    const eErr = emailError(email);
+                    const pErr = password ? null : 'Введите пароль';
+                    setLoginEmailError(eErr);
+                    setLoginPasswordError(pErr);
+                    if (eErr || pErr) return;
                     await auth.signIn(email, password, remember);
                     push('Добро пожаловать!', 'success');
+                    close();
                   } else {
-                    if (!fullName.trim()) { push('Введите имя', 'error'); return; }
-                    if (password !== confirmPassword) { push('Пароли не совпадают', 'error'); return; }
+                    const nErr = fullName.trim() ? null : 'Введите имя';
+                    const eErr = emailError(email);
+                    const pErr = passwordError(password);
+                    const cErr = password === confirmPassword ? null : 'Пароли не совпадают';
+                    setRegNameError(nErr);
+                    setRegEmailError(eErr);
+                    setRegPasswordError(pErr);
+                    setRegConfirmError(cErr);
+                    if (nErr || eErr || pErr || cErr) return;
                     await auth.signUp({ name: fullName.trim(), email, password, passwordConfirmation: confirmPassword, remember });
                     push('Регистрация выполнена', 'success');
+                    close();
+                    open('signup-info');
                   }
-                  close();
+                  
                 } catch (e: any) {
+                  if (tab === 'login') {
+                    if (e instanceof ApiError && (e.status === 401 || e.status === 404)) {
+                      setLoginPasswordError('Неверные учетные данные');
+                      setLoginEmailError(null);
+                      return;
+                    }
+                  }
                   const msg = e?.message || 'Ошибка запроса';
                   push(msg, 'error');
                 }
@@ -251,12 +351,40 @@ export const AuthModals: React.FC = () => {
         </div>
       </Modal>
 
-      <Modal open={current === 'reset-password'} onClose={close} title="Восстановление пароля">
+      <Modal open={current === 'reset-password'} onClose={close} title="Восстановить доступ">
         <div className="col">
-          <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} />
+          <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} error={resetEmailError} />
           <div className="row" style={{ justifyContent: 'flex-end' }}>
-            <Button onClick={async () => { await auth.requestPasswordReset(email); push('Мы отправили письмо для сброса', 'success'); close(); }}>Отправить</Button>
+            <Button onClick={async () => {
+              const eErr = emailError(email);
+              setResetEmailError(eErr);
+              if (eErr) return;
+              await auth.requestPasswordReset(email);
+              push('Письмо со сбросом пароля отправлено на почту', 'success');
+              close();
+              open(RESET_INFO_MODAL_ID);
+            }}>Отправить</Button>
           </div>
+        </div>
+      </Modal>
+
+      {/* Информационное окно после регистрации */}
+      <Modal open={current === 'signup-info'} onClose={close} title="Почти готово!">
+        <div className="col" style={{ gap: 12 }}>
+          <p style={{ margin: 0, color: '#e6e6e6' }}>
+            Мы отправили письмо с подтверждением на ваш email. Чтобы завершить
+            регистрацию, перейдите по ссылке из письма. После подтверждения вы
+            сможете войти в систему.
+          </p>
+        </div>
+      </Modal>
+
+      {/* Информационное окно после запроса на сброс пароля */}
+      <Modal open={current === RESET_INFO_MODAL_ID} onClose={close} title="Проверьте почту">
+        <div className="col" style={{ gap: 12 }}>
+          <p style={{ margin: 0, color: '#e6e6e6' }}>
+            Письмо для восстановления доступа отправлено. Откройте вашу почту и перейдите по ссылке из письма, чтобы задать новый пароль. Если письма нет — проверьте «Спам».
+          </p>
         </div>
       </Modal>
 
