@@ -41,10 +41,10 @@ const GameCanvas: React.FC = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   const initialToken = getToken();
   const unityConfig = {
-    loaderUrl: `${BASENAME}/stress_game/Build/Build.loader.js`,
-    dataUrl: `${BASENAME}/stress_game/Build/Build.data`,
-    frameworkUrl: `${BASENAME}/stress_game/Build/Build.framework.js`,
-    codeUrl: `${BASENAME}/stress_game/Build/Build.wasm`,
+    loaderUrl: `${BASENAME}/stress_game/Build/Build5.loader.js`,
+    dataUrl: `${BASENAME}/stress_game/Build/Build5.data.unityweb`,
+    frameworkUrl: `${BASENAME}/stress_game/Build/Build5.framework.js.unityweb`,
+    codeUrl: `${BASENAME}/stress_game/Build/Build5.wasm.unityweb`,
     streamingAssetsUrl: `${BASENAME}/stress_game/StreamingAssets`,
     companyName: 'DefaultCompany',
     productName: 'Samogochi',
@@ -61,12 +61,12 @@ const GameCanvas: React.FC = () => {
     if (!isLoaded) return;
     const token = getToken();
     if (token) {
-      try { sendMessage('AuthBridge', 'ReceiveToken', token); } catch {}
+      try { sendMessage('API', 'SetToken', token); } catch {}
     }
     const handleRequest = () => {
       const t = getToken();
       if (t) {
-        try { sendMessage('AuthBridge', 'ReceiveToken', t); } catch {}
+        try { sendMessage('API', 'SetToken', t); } catch {}
       }
     };
     addEventListener('RequestAuthToken', handleRequest);
