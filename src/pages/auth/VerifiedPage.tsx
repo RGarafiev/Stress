@@ -10,7 +10,7 @@ export const VerifiedPage: React.FC = () => {
     const token = searchParams.get('token');
     if (token) {
       saveSession(token, undefined, true);
-      const timeout = setTimeout(() => navigate('/'), 1500);
+      const timeout = setTimeout(() => navigate('/'), 200);
       return () => clearTimeout(timeout);
     } else {
       navigate('/auth/verification-failed?error=token_missing', { replace: true });
