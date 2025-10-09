@@ -166,7 +166,7 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
         )}
       </div>
       {isMenuOpen && menuPosition && createPortal(
-        <div className="account-menu-portal" style={{ position: 'fixed', top: menuPosition.top, right: menuPosition.right, zIndex: 10002 }}>
+          <div className="account-menu-portal" style={{ position: 'fixed', top: menuPosition.top, right: menuPosition.right, zIndex: 10002 }}>
           <div className="account-menu" role="menu" tabIndex={-1} style={{
             background: '#0f172a',
             border: 'none',
@@ -175,6 +175,17 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
             boxShadow: '0 10px 26px rgba(0,0,0,.34)',
             padding: 6
           }}>
+            {user?.email && (
+              <div style={{
+                color: '#cbd5e1',
+                fontSize: 12,
+                padding: '8px 12px 6px',
+                borderBottom: '1px solid rgba(255,255,255,0.08)',
+                marginBottom: 6
+              }}>
+                {user.email}
+              </div>
+            )}
             <button
               type="button"
               className="logout-button"

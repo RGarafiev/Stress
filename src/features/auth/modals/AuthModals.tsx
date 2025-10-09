@@ -312,15 +312,50 @@ export const AuthModals: React.FC = () => {
                   }
                   
                 } catch (e: any) {
-                  if (tab === 'login') {
-                    if (e instanceof ApiError && (e.status === 401 || e.status === 404)) {
+                  if (e instanceof ApiError) {
+                    if (tab === 'login') {
+                      // Auth errors
+                      if (e.status === 401 || e.status === 404) {
+                        setLoginPasswordError('Неверные учетные данные');
+                        setLoginEmailError(null);
+                        return;
+                      }
+                      // Validation errors from backend (e.g. 422)
+                      if (e.errors) {
+                        const emailErr = e.errors.email?.[0] || null;
+                        const passwordErr = e.errors.password?.[0] || null;
+                        setLoginEmailError(emailErr);
+                        setLoginPasswordError(passwordErr);
+                        const firstMsg = emailErr || passwordErr || e.message || 'Ошибка запроса';
+                        push(firstMsg, 'error');
+                        return;
+                      }
+                      // Any other API error during login → show Russian generic message
                       setLoginPasswordError('Неверные учетные данные');
-                      setLoginEmailError(null);
+                      push('Такого пользователя не существует или введены неверные данные', 'error');
                       return;
+                    } else {
+                      // Register: map server-side validation to specific fields
+                      if (e.errors) {
+                        const nameErr = e.errors.name?.[0] || null;
+                        const emailErr = e.errors.email?.[0] || null;
+                        const passwordErr = e.errors.password?.[0] || null;
+                        const confirmErr = e.errors.password_confirmation?.[0] || e.errors.passwordConfirmation?.[0] || null;
+                        setRegNameError(nameErr);
+                        setRegEmailError(emailErr);
+                        setRegPasswordError(passwordErr);
+                        setRegConfirmError(confirmErr);
+                        const firstMsg = nameErr || emailErr || passwordErr || confirmErr || e.message || 'Ошибка запроса';
+                        push(firstMsg, 'error');
+                        return;
+                      }
                     }
+                    // Fallback for API errors without field details
+                    push('Ошибка запроса', 'error');
+                    return;
                   }
-                  const msg = e?.message || 'Ошибка запроса';
-                  push(msg, 'error');
+                  // Non-API unexpected error
+                  push('Ошибка запроса', 'error');
                 }
               }}
               style={{ background:'#ffffff', color:'#111827', borderRadius: 10, height: 44, fontFamily:'Comfortaa', fontWeight: 600 }}

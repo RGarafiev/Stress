@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { login as apiLogin, register as apiRegister, logout as apiLogout } from '../api/auth';
+import { login as apiLogin, register as apiRegister, logout as apiLogout, me as apiMe } from '../api/auth';
 import { requestRefresh } from '../api/client';
 import { clearSession, getEmail, getToken, saveSession } from '../auth/session';
 
@@ -31,13 +31,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Restore session on mount (best-effort from stored email)
+  // Restore session on mount; if token exists, try to fetch current user and require verified email
   useEffect(() => {
     const token = getToken();
-    const storedEmail = getEmail();
-    if (token && storedEmail && !user) {
-      setUser({ id: 'self', email: storedEmail });
-    }
+    if (!token) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const me = await apiMe();
+        if (!cancelled) {
+          if (!me.email_verified_at) {
+            clearSession();
+            return;
+          }
+          setUser({ id: String(me.id), email: me.email });
+        }
+      } catch {
+        // Fallback to stored email if available
+        const storedEmail = getEmail();
+        if (storedEmail && !cancelled) {
+          setUser({ id: 'self', email: storedEmail });
+        }
+      }
+    })();
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -49,7 +66,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const res = await apiLogin({ email, password });
         saveSession(res.token, res.user?.email || email, remember);
-        setUser({ id: res.user?.id || 'self', email: res.user?.email || email });
+        const me = await apiMe();
+        if (!me.email_verified_at) {
+          clearSession();
+          throw new Error('Подтвердите email, чтобы войти в систему');
+        }
+        setUser({ id: String(me.id), email: me.email });
       } finally {
         setIsLoading(false);
       }
@@ -57,9 +79,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     async signUp({ name, email, password, passwordConfirmation, remember = true }) {
       setIsLoading(true);
       try {
-        const res = await apiRegister({ name, email, password, password_confirmation: passwordConfirmation });
-        saveSession(res.token, res.user?.email || email, remember);
-        setUser({ id: res.user?.id || 'self', email: res.user?.email || email });
+        // Register but do NOT authorize yet; wait for email verification
+        await apiRegister({ name, email, password, password_confirmation: passwordConfirmation });
       } finally {
         setIsLoading(false);
       }
@@ -74,12 +95,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     async requestPasswordReset(_email) { /* Not implemented on API spec */ },
     async confirmEmail(_code) { /* Not implemented on API spec */ },
     async ensureAuthenticated() {
-      if (getToken()) return true;
+      const token = getToken();
+      if (token) {
+        try {
+          const me = await apiMe();
+          if (!me.email_verified_at) {
+            clearSession();
+            return false;
+          }
+          setUser({ id: String(me.id), email: me.email });
+          return true;
+        } catch {
+          // continue to refresh attempt
+        }
+      }
       const newToken = await requestRefresh();
       if (newToken) {
-        const email = getEmail();
-        setUser(prev => prev || (email ? { id: 'self', email } : { id: 'self', email: 'user@example.com' }));
-        return true;
+        try {
+          const me = await apiMe();
+          if (!me.email_verified_at) {
+            clearSession();
+            return false;
+          }
+          setUser({ id: String(me.id), email: me.email });
+          return true;
+        } catch {
+          return false;
+        }
       }
       return false;
     }

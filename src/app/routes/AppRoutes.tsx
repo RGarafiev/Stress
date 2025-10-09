@@ -7,6 +7,8 @@ import { GamePage } from '../../pages/game/GamePage';
 import { PrivacyPage } from '../../pages/legal/PrivacyPage';
 import { TermsPage } from '../../pages/legal/TermsPage';
 import { NotFoundPage } from '../../pages/NotFoundPage';
+import { VerifiedPage } from '../../pages/auth/VerifiedPage';
+import { VerificationFailedPage } from '../../pages/auth/VerificationFailedPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -19,6 +21,9 @@ export const AppRoutes: React.FC = () => {
       <Route element={<GameLayout />}> 
         <Route path="/game" element={<GamePage />} />
       </Route>
+      {/* Auth verification routes */}
+      <Route path="/auth/verified" element={<VerifiedPage />} />
+      <Route path="/auth/verification-failed" element={<VerificationFailedPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
