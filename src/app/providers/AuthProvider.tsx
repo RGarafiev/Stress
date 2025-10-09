@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { login as apiLogin, register as apiRegister, logout as apiLogout, me as apiMe } from '../api/auth';
+import { login as apiLogin, register as apiRegister, logout as apiLogout, me as apiMe, forgotPassword as apiForgotPassword } from '../api/auth';
 import { requestRefresh } from '../api/client';
 import { clearSession, getEmail, getToken, saveSession } from '../auth/session';
 
@@ -92,7 +92,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setIsLoading(false);
     },
-    async requestPasswordReset(_email) { /* Not implemented on API spec */ },
+    async requestPasswordReset(email) {
+      await apiForgotPassword({ email });
+    },
     async confirmEmail(_code) { /* Not implemented on API spec */ },
     async ensureAuthenticated() {
       const token = getToken();

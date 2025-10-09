@@ -26,6 +26,14 @@ export type MeResponse = {
   is_admin?: boolean;
 };
 
+export type ForgotPasswordRequest = {
+  email: string;
+};
+
+export type ForgotPasswordResponse = {
+  sent: boolean;
+};
+
 export async function login(req: LoginRequest): Promise<AuthResponse> {
   return apiFetch<AuthResponse>('/auth/login', {
     method: 'POST',
@@ -48,6 +56,13 @@ export async function logout(): Promise<{ ok: true }> {
 export async function me(): Promise<MeResponse> {
   // The API returns { success, data } envelope; apiFetch unwraps to data
   return apiFetch<MeResponse>('/auth/me', { method: 'GET' });
+}
+
+export async function forgotPassword(req: ForgotPasswordRequest): Promise<ForgotPasswordResponse> {
+  return apiFetch<ForgotPasswordResponse>('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify(req),
+  });
 }
 
 

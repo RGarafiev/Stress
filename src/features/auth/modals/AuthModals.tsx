@@ -391,13 +391,17 @@ export const AuthModals: React.FC = () => {
           <Input label="Email" value={email} onChange={e => setEmail(e.target.value)} error={resetEmailError} />
           <div className="row" style={{ justifyContent: 'flex-end' }}>
             <Button onClick={async () => {
-              const eErr = emailError(email);
-              setResetEmailError(eErr);
-              if (eErr) return;
-              await auth.requestPasswordReset(email);
-              push('Письмо со сбросом пароля отправлено на почту', 'success');
-              close();
-              open(RESET_INFO_MODAL_ID);
+              try {
+                const eErr = emailError(email);
+                setResetEmailError(eErr);
+                if (eErr) return;
+                await auth.requestPasswordReset(email);
+                push('Письмо со сбросом пароля отправлено на почту', 'success');
+                close();
+                open(RESET_INFO_MODAL_ID);
+              } catch (e: any) {
+                push(e?.message || 'Не удалось отправить письмо', 'error');
+              }
             }}>Отправить</Button>
           </div>
         </div>
