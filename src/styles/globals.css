@@ -867,6 +867,12 @@ header {
   color: var(--muted);
   z-index: 3;
 }
+/* Desktop (<1920px) static paddings for brace labels */
+@media (max-width: 1919px) and (min-width: 769px) {
+  .how-label { padding-left: 12px; }
+  .about-label { padding-left: 12px; }
+  .care-mission-label { padding-right: 12px; }
+}
 .care-grid { 
   position: absolute;
   top: 0;
@@ -1097,6 +1103,11 @@ header {
 .articles-blob-right-light { right: -70px; bottom: -350px; width: 540px; z-index: 1; }
 .articles-blob-right-dark { right: -30px; bottom: -22px; width: 260px; z-index: 2; }
 
+/* Articles blobs — hide the left outline arc on 887–769px */
+@media (max-width: 887px) and (min-width: 769px) {
+  .articles-blob-left-outline { display: none; }
+}
+
 /* Articles blobs - tablet/mobile adjustments */
 @media (max-width: 768px) {
   .articles-blob-left-light { left: -160px; bottom: auto; top: -60px; width: 420px; }
@@ -1113,6 +1124,11 @@ header {
   .articles-blob-left-outline { left: -145px; top: -210px; width: 290px; --articles-rotate-left-outline: rotate(30deg); }
   .articles-blob-right-light { right: -100px; bottom: -200px; width: 480px; }
   .articles-blob-right-dark { right: -120px; bottom: -50px; width: 190px; }
+}
+
+/* Articles blobs — hide left light blob strictly on 768–481px */
+@media (max-width: 768px) and (min-width: 481px) {
+  .articles-blob-left-light { display: none !important; }
 }
 
 /* Articles title styles */
@@ -1168,6 +1184,7 @@ header {
   width: 820px;
   height: 541px;
   background: transparent;
+  transform: translateX(-40px);
 }
 
 .about-light-blob {
@@ -1249,6 +1266,7 @@ header {
   .about-image-container {
     width: 600px;
     height: 400px;
+    transform: translateX(-20px);
   }
   
   .about-light-blob {
@@ -1291,6 +1309,7 @@ header {
     max-width: 400px;
     height: 300px;
     margin: 100px auto 32px auto;
+    transform: none; /* на планшетах/мобилках — без сдвига */
   }
   /* Mobile-only tuning knobs (tablet/phones ≤768px) */
   /* Меняйте только эти переменные на .about — они не затронут десктоп */

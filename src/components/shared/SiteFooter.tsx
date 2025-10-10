@@ -1,7 +1,39 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 export const SiteFooter: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  function goToSection(sectionId: 'rules' | 'mission' | 'blog'): void {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+    const el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function goHome(e?: React.MouseEvent): void {
+    if (e) e.preventDefault();
+    const scrollTopSmooth = () => {
+      const el = document.scrollingElement || document.documentElement;
+      if (el && 'scrollTo' in el) {
+        (el as HTMLElement).scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      // hard fallback
+      (document.body as HTMLElement).scrollTop = 0;
+      (document.documentElement as HTMLElement).scrollTop = 0;
+    };
+    if (location.pathname !== '/') {
+      navigate('/', { replace: false, state: { toTop: true, ts: Date.now() } });
+      setTimeout(scrollTopSmooth, 120);
+      return;
+    }
+    scrollTopSmooth();
+  }
+
   return (
     <footer className="footer">
       <div className="footer-blobs" aria-hidden>
@@ -33,10 +65,10 @@ export const SiteFooter: React.FC = () => {
 
       <div className="container footer-inner">
         <nav className="footer-nav">
-          <Link to="/">Главная</Link>
-          <a href="#rules">Правила</a>
-          <a href="#mission">Миссия игры</a>
-          <a href="#blog">Статьи</a>
+          <Link to="/" onClick={goHome}>Главная</Link>
+          <a href="#rules" onClick={(e) => { e.preventDefault(); goToSection('rules'); }}>Правила</a>
+          <a href="#mission" onClick={(e) => { e.preventDefault(); goToSection('mission'); }}>Миссия игры</a>
+          <a href="#blog" onClick={(e) => { e.preventDefault(); goToSection('blog'); }}>Статьи</a>
         </nav>
         <div className="footer-brand" aria-label="Stresshelp">
           <svg width="133" height="61" viewBox="0 0 133 61" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -35,8 +35,8 @@ const ArticlesRightLightBlob: React.FC<{ style?: React.CSSProperties }> = ({ sty
 );
 
 const CornerArrowSvg: React.FC = () => (
-  <svg viewBox="0 0 34 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32.3096 1.41835L7.20019 1.26978M32.3096 1.41835L32.4582 26.5278M32.3096 1.41835L2 31.728" stroke="#2A2725" strokeWidth="2.5419" strokeLinecap="round" strokeLinejoin="round"/>
+  <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M26 1L1 1.00011M26 1V26M26 1L1 26" stroke="#121212" strokeOpacity="0.4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>
 );
 
@@ -132,7 +132,9 @@ export const ArticlesSection: React.FC = () => {
         {/* Center logo */}
         <ArticlesLogo style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 3 }} />
 
-        <div className="articles-corner"><CornerArrowSvg /></div>
+        <a className="articles-corner" href="https://stresshelp.ru/stati-i-video/" target="_blank" rel="noopener noreferrer" aria-label="Статьи и видео — StressHelp">
+          <CornerArrowSvg />
+        </a>
       </div>
     </section>
   );

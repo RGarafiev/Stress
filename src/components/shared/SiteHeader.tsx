@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../app/providers/AuthProvider';
 import { useModal } from '../../app/providers/ModalProvider';
 import { Button } from '../ui/Button';
@@ -14,6 +14,7 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
   const { user, signOut } = useAuth();
   const { open } = useModal();
   const navigate = useNavigate();
+  const location = useLocation();
   const { push } = useToast();
   const [menuFor, setMenuFor] = useState<null | 'desktop' | 'mobile' | 'phone'>(null);
   const [menuPosition, setMenuPosition] = useState<null | { top: number; right: number }>(null);
@@ -55,6 +56,33 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
     setMenuFor(source);
   }
 
+  // Navigation helpers: identical behavior with footer
+  function goToSection(sectionId: 'rules' | 'mission' | 'blog'): void {
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+    const el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function goHome(e?: React.MouseEvent): void {
+    if (e) e.preventDefault();
+    const scrollTopSmooth = () => {
+      const el = document.scrollingElement || document.documentElement;
+      if (el && 'scrollTo' in el) (el as HTMLElement).scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      (document.body as HTMLElement).scrollTop = 0;
+      (document.documentElement as HTMLElement).scrollTop = 0;
+    };
+    if (location.pathname !== '/') {
+      navigate('/', { state: { toTop: true, ts: Date.now() } });
+      setTimeout(scrollTopSmooth, 120);
+      return;
+    }
+    scrollTopSmooth();
+  }
+
   const bar = (
     <>
       <div className="nav-bar">
@@ -64,10 +92,10 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
           </Link>
         </div>
         <div className="nav-center">
-          <Link to="/" className="nav-chip">Главная</Link>
-          <a href="#rules" className="nav-chip">Правила</a>
-          <a href="#mission" className="nav-chip">Миссия игры</a>
-          <a href="#blog" className="nav-chip">Статьи</a>
+          <Link to="/" className="nav-chip" onClick={goHome}>Главная</Link>
+          <a href="#rules" className="nav-chip" onClick={(e) => { e.preventDefault(); goToSection('rules'); }}>Правила</a>
+          <a href="#mission" className="nav-chip" onClick={(e) => { e.preventDefault(); goToSection('mission'); }}>Миссия игры</a>
+          <a href="#blog" className="nav-chip" onClick={(e) => { e.preventDefault(); goToSection('blog'); }}>Статьи</a>
         </div>
         <div className={`nav-right${user ? ' no-cta' : ''}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           {user && (
