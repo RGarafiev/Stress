@@ -1,6 +1,9 @@
 import React from 'react';
 import { Grid, Col } from '../../components/ui/Grid';
 import { useFadeIn } from '../../hooks/useFadeIn';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { useModal } from '../../app/providers/ModalProvider';
+import { useNavigate } from 'react-router-dom';
 
 // Компонент для новой стрелки (мобильная версия)
 const MobileArrow: React.FC<{ className?: string }> = ({ className = '' }) => (
@@ -26,7 +29,10 @@ export const CareSection: React.FC = () => {
   const { elementRef: arrowRef, shouldAnimate: arrowShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 400 });
   const { elementRef: descTitleRef, shouldAnimate: descTitleShouldAnimate } = useFadeIn<HTMLHeadingElement>({ delay: 600 });
   const { elementRef: descTextRef, shouldAnimate: descTextShouldAnimate } = useFadeIn<HTMLParagraphElement>({ delay: 800 });
-  const { elementRef: ctaRef, shouldAnimate: ctaShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 1000 });
+  const { elementRef: ctaRef, shouldAnimate: ctaShouldAnimate } = useFadeIn<HTMLButtonElement>({ delay: 1000 });
+  const { user, ensureAuthenticated } = useAuth();
+  const { open } = useModal();
+  const navigate = useNavigate();
 
   return (
     <section id="mission" className="container care-section">
@@ -77,7 +83,7 @@ export const CareSection: React.FC = () => {
               ref={descTitleRef}
               className={`care-title-desc fade-in-up ${descTitleShouldAnimate ? 'animate' : ''}`}
             >
-              "Самогочи" создан, чтобы<br/> напоминать:даже в суете дня<br/> у тебя есть время на себя
+              "Самогочи" создан, чтобы<br/> напоминать: даже в суете дня<br/> у тебя есть время на себя
             </h3>
             <p 
               ref={descTextRef}
@@ -85,12 +91,21 @@ export const CareSection: React.FC = () => {
             >
               Это игра-антистресс, где ты учишься заботиться о герое — и незаметно учишься заботиться о себе
             </p>
-            <div 
+            <button 
+              type="button"
               ref={ctaRef}
               className={`care-cta fade-in-up ${ctaShouldAnimate ? 'animate' : ''}`}
+              onClick={async () => {
+                const ok = user ? true : await ensureAuthenticated();
+                if (ok) {
+                  navigate('/game', { state: { entry: 'cta-care' } });
+                } else {
+                  open('login');
+                }
+              }}
             >
               Смотри, как тревога тает, а настроение становится легче
-            </div>
+            </button>
           </div>
         </div>
       </div>

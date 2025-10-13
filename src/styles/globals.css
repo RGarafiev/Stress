@@ -963,9 +963,13 @@ header {
   letter-spacing: -0.03125em; 
   font-family: 'Comfortaa', sans-serif;
   text-align: center;
-  cursor: default; 
+  border: none; 
+  outline: none; 
+  -webkit-appearance: none; 
+  appearance: none; 
+  cursor: pointer; 
   transition: none; 
-  pointer-events: none; 
+  pointer-events: auto; 
 }
 .care-cta:hover { background: #319AB9; transform: none; }
 
