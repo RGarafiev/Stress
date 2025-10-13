@@ -4,10 +4,14 @@ import { Button } from '../../components/ui/Button';
 import { BlobBehindPerson, BlobBehindPersonMobile, PersonOutline, AboutLightBlob } from '../../components/ui/BlobElements';
 import { useFadeIn } from '../../hooks/useFadeIn';
 import { useModal } from '../../app/providers/ModalProvider';
+import { useAuth } from '../../app/providers/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import {BASENAME} from "../../index";
 
 export const AboutSection: React.FC = () => {
   const { open } = useModal();
+  const { user, ensureAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const { elementRef: labelRef, shouldAnimate: labelShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 0 });
   const { elementRef: titleRef, shouldAnimate: titleShouldAnimate } = useFadeIn<HTMLHeadingElement>({ delay: 200 });
   const { elementRef: subtitleRef, shouldAnimate: subtitleShouldAnimate } = useFadeIn<HTMLParagraphElement>({ delay: 400 });
@@ -118,7 +122,14 @@ export const AboutSection: React.FC = () => {
             <Button 
               variant="game" 
               className="about-cta"
-              onClick={() => open('login')}
+              onClick={async () => {
+                const ok = user ? true : await ensureAuthenticated();
+                if (ok) {
+                  navigate('/game', { state: { entry: 'about-cta' } });
+                } else {
+                  open('login');
+                }
+              }}
             >
               Погрузиться в мир
             </Button>
