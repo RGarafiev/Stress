@@ -13,9 +13,9 @@ export const GamePage: React.FC = () => {
   const location = useLocation();
   const { open } = useModal();
 
-  // Gate entry: only allow when navigated from CTA with state.entry === 'cta'
+  // Gate entry: only allow when navigated from CTA with state.entry (any CTA button)
   useEffect(() => {
-    const cameFromCta = (location.state as any)?.entry === 'cta';
+    const cameFromCta = !!(location.state as any)?.entry;
     if (!cameFromCta) {
       navigate('/', { replace: true });
       return;
@@ -33,13 +33,13 @@ export const GamePage: React.FC = () => {
   }, [user, navigate, open, ensureAuthenticated, location.state]);
 
   if (!user) return null;
-
   return <GameCanvas />;
 };
 
 const GameCanvas: React.FC = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
   const initialToken = getToken();
+  
   const unityConfig = {
     loaderUrl: `${BASENAME}/stress_game/Build/Build5.loader.js`,
     dataUrl: `${BASENAME}/stress_game/Build/Build5.data.unityweb`,
@@ -73,12 +73,51 @@ const GameCanvas: React.FC = () => {
     return () => { removeEventListener('RequestAuthToken', handleRequest); };
   }, [isLoaded, sendMessage, addEventListener, removeEventListener]);
 
-  // disable body scroll while on game page
+  // disable body scroll while on game page and remove white background
   useEffect(() => {
     window.scrollTo({left: 0, top: 0, behavior: "auto"});
+    
+    // Save previous styles
     const prev = document.body.style.overflow;
+    const prevBg = document.body.style.background;
+    const prevHeight = document.body.style.height;
+    const prevMargin = document.body.style.margin;
+    const prevPadding = document.body.style.padding;
+    
+    const root = document.getElementById('root');
+    const prevRootBg = root?.style.background || '';
+    const prevRootHeight = root?.style.height || '';
+    const prevRootMargin = root?.style.margin || '';
+    const prevRootPadding = root?.style.padding || '';
+    
+    // Apply game styles
     document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = prev; };
+    document.body.style.background = '#000';
+    document.body.style.height = '100vh';
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    
+    if (root) {
+      root.style.background = 'transparent';
+      root.style.height = '100vh';
+      root.style.margin = '0';
+      root.style.padding = '0';
+    }
+    
+    return () => { 
+      document.body.style.overflow = prev;
+      document.body.style.background = prevBg;
+      document.body.style.height = prevHeight;
+      document.body.style.margin = prevMargin;
+      document.body.style.padding = prevPadding;
+      
+      if (root) {
+        root.style.background = prevRootBg;
+        root.style.height = prevRootHeight;
+        root.style.margin = prevRootMargin;
+        root.style.padding = prevRootPadding;
+      }
+    };
   }, []);
 
   // measure header height to place canvas exactly below it
@@ -92,58 +131,60 @@ const GameCanvas: React.FC = () => {
 
   return (
     <div style={{
-      position: 'relative',
+      position: 'fixed',
+      top: 0,
+      left: 0,
       width: '100%',
       height: '100vh',
-      backgroundImage: `url("${BASENAME}/images/hero-bg-6bfd80.png")`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      overflow: 'hidden'
+      backgroundColor: '#000',
+      overflow: 'hidden',
+      zIndex: 1
     }}>
-      {/* Dark overlay */}
-      <div style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'rgba(13, 13, 13, 0.65)',
-        borderRadius: '0 0 30px 30px'
-      }} />
-      
       {/* Fixed Navbar */}
-      <div id="game-header" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 20 }}>
+      <div id="game-header" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1000 }}>
         <SiteHeader embedded />
       </div>
       
-      {/* Main Content: Unity canvas */}
+      {/* Loading screen */}
+      {!isLoaded && (
+        <div style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'rgba(255,255,255,0.8)',
+          zIndex: 500,
+          background: '#000',
+          fontSize: '24px'
+        }}>
+          Загрузка игры: {progressPercent}%
+        </div>
+      )}
+      
+      {/* Unity canvas container */}
       <div style={{
         position: 'absolute',
         top: 0,
-        // top: headerHeight,
-        bottom: 0,
         left: 0,
-        right: 0,
-        zIndex: 5,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        textAlign: 'center',
-        color: '#ffffff',
-        padding: 0
+        width: '100%',
+        height: '100%',
+        zIndex: 100
       }}>
-        <div style={{ width: '100%', height: '100%', margin: 0 }}>
-          {!isLoaded && (
-            <div style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              color: 'rgba(255,255,255,0.8)' }}>Загрузка игры: {progressPercent}%</div>
-          )}
-          <Unity unityProvider={unityProvider} style={{ width: '100%', height: '100%', background: '#000' }} />
-        </div>
+        <Unity 
+          unityProvider={unityProvider} 
+          style={{ 
+            width: '100%', 
+            height: '100%',
+            display: 'block',
+            position: 'absolute',
+            top: 0,
+            left: 0
+          }} 
+        />
       </div>
     </div>
   );

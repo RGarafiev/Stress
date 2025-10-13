@@ -54,7 +54,11 @@ export const HomePage: React.FC = () => {
           ctaText="Начать игру"
           onCtaClick={async () => {
             const ok = user ? true : await ensureAuthenticated();
-            if (ok) navigate('/game', { state: { entry: 'cta' } }); else open('login');
+            if (ok) {
+              navigate('/game', { state: { entry: 'cta' } });
+            } else {
+              open('login');
+            }
           }}
         />
       </HeroBackground>
