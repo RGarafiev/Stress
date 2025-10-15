@@ -53,10 +53,10 @@ export const CareSection: React.FC = () => {
           Игра, которая<br/>
           <span className="care-title-dim">заботится о тебе</span>
         </h2>
-        <p
+            <p 
           className="care-subtitle"
         >
-
+              {/* Это игра-антистресс, где заботясь о герое, ты учишься бережно относиться к себе. */}
         </p>
       </div>
 
@@ -89,7 +89,7 @@ export const CareSection: React.FC = () => {
               ref={descTextRef}
               className={`care-description fade-in-up ${descTextShouldAnimate ? 'animate' : ''}`}
             >
-              Это игра-антистресс, где ты учишься заботиться о герое — и незаметно учишься заботиться о себе
+              Это игра-антистресс, где заботясь о герое, ты учишься бережно относиться к себе.
             </p>
             <button 
               type="button"
@@ -104,7 +104,7 @@ export const CareSection: React.FC = () => {
                 }
               }}
             >
-              Смотри, как тревога тает, а настроение становится легче
+              Смотри, как тревога растворяется, уступая место лёгкости.
             </button>
           </div>
         </div>

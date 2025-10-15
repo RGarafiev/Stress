@@ -900,6 +900,7 @@ header {
   display: flex;
   justify-content: center; /* center the arrow horizontally */
   align-items: center;
+  margin-left: 72px; /* ещё немного правее */
 }
 
 /* Arrow responsive styles */
@@ -911,6 +912,7 @@ header {
   .care-arrow-mobile { display: block; }
   .care-arrow {
     margin-top: 0;
+    margin-left: 0; /* без сдвига на мобильных */
     max-width: 100%;
     width: 100%;
     justify-content: center;
@@ -1058,8 +1060,8 @@ header {
 .how-title { margin: 0; text-align: left; font-size: 64px; font-weight: 400; font-family: 'Comfortaa', sans-serif; line-height: 0.8829em; letter-spacing: -0.03125em; color: var(--text); }
 .how-title-dim { color: var(--muted); }
 .how-sub { margin: 8px 0 0; color: var(--muted); text-align: left; font-size: 20px; font-family: 'Comfortaa', sans-serif; line-height: 1.1em; letter-spacing: -0.025em; }
-.how-list { row-gap: 28px; }
-.how-item { display: grid; grid-template-columns: 30px 1fr; column-gap: 20px; align-items: center; }
+.how-list { row-gap: 68px; }
+.how-item { display: grid; grid-template-columns: 30px 1fr; column-gap: 20px; align-items: start; }
 .how-num { color: #c0c3c7; }
 .how-text { font-weight: 400; font-size: 32px; line-height: 1em; letter-spacing: -0.015625em; font-family: 'Comfortaa', sans-serif; color: var(--text); white-space: pre-line; }
 
@@ -1070,7 +1072,7 @@ header {
   .how-title { font-size: 30px; }
   .how-sub { font-size: 16px; }
   .how-text { font-size: 16px; }
-  .how-list { row-gap: 20px; }
+  .how-list { row-gap: 28px; }
 }
 
 @media (max-width: 480px) {
