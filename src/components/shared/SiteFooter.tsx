@@ -36,7 +36,7 @@ export const SiteFooter: React.FC = () => {
 
   return (
     <footer className="footer">
-      <div className="footer-blobs" aria-hidden>
+      <div className="footer-blobs" aria-hidden="true">
         <div className="footer-blobs-inner">
         {/* Left light blob (updated) */}
         <svg className="footer-blob-left-svg" width="941" height="228" viewBox="0 0 941 228" fill="none" xmlns="http://www.w3.org/2000/svg">
