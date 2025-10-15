@@ -239,7 +239,7 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
   if (embedded) return <div style={{ paddingTop: 20, marginBottom: 0, width: '100%' }}>{bar}</div>;
 
   return (
-    <header className={translucent ? 'translucent' : ''} style={{ marginTop: 0, width: '100%' }}>
+    <header className={translucent ? 'translucent' : 'solid'} style={{ marginTop: 0, width: '100%' }}>
       <div style={{ paddingTop: 20, paddingBottom: 0, width: '100%' }}>
         {bar}
       </div>

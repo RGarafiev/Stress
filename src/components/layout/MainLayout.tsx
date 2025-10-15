@@ -6,9 +6,10 @@ import { SiteFooter } from '../shared/SiteFooter';
 export const MainLayout: React.FC = () => {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  const isPrivacy = location.pathname === '/privacy';
   return (
     <div>
-      {!isHome && <SiteHeader translucent={false} />}
+      {!isHome && <SiteHeader translucent={!isPrivacy} />}
       <main className={isHome ? "" : "container"} style={isHome ? { paddingTop: 0, paddingBottom: 0 } : { paddingTop: 32, paddingBottom: 48 }}>
         <Outlet />
       </main>

@@ -69,6 +69,7 @@ export const SiteFooter: React.FC = () => {
           <a href="#rules" onClick={(e) => { e.preventDefault(); goToSection('rules'); }}>Правила</a>
           <a href="#mission" onClick={(e) => { e.preventDefault(); goToSection('mission'); }}>Миссия игры</a>
           <a href="#blog" onClick={(e) => { e.preventDefault(); goToSection('blog'); }}>Статьи</a>
+          <Link to="/privacy">Политика конфиденциальности</Link>
         </nav>
         <div className="footer-brand" aria-label="Stresshelp">
           <svg width="133" height="61" viewBox="0 0 133 61" fill="none" xmlns="http://www.w3.org/2000/svg">

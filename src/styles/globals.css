@@ -159,6 +159,8 @@ header.translucent {
   border-bottom: 1px solid rgba(255,255,255,0.08);
   width: 100%;
 }
+/* Non-sticky header variant (privacy) */
+header.solid { position: static; background: transparent; }
 header { 
   margin-top: 0; 
   width: 100%;
@@ -183,6 +185,11 @@ header {
   position: relative;
   box-sizing: border-box;
 }
+
+/* Privacy: keep only pill background and remove page-wide gray */
+header.solid .nav-bar { background: rgba(52,52,52,0.65); }
+header.solid .nav-chip { color: #fff; }
+header.solid .cta-try-now { background: #fff !important; color: #121212 !important; }
 
 /* Mobile nav bar */
 /* Узкая мобильная шапка — изменение размеров кнопки только здесь */
