@@ -413,12 +413,16 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
  .nav-logo .logo-link {
    position: absolute;
    left: 40px;
-   top: 17.99px;
+   top: 18px;
    display: flex;
    align-items: center;
+   line-height: 0;
    width: 107px;
-   height: 48.49px;
+   height: 49px;
  }
+
+  /* Ensure logo wrapper fills container height for consistent image scaling across browsers */
+  .nav-logo .logo-link .logo-desktop { display: block; height: 100%; width: 100%; }
 
  .nav-center {
    position: absolute;
