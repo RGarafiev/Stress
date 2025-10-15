@@ -1,6 +1,13 @@
 import React from 'react';
 
 export const PrivacyPage: React.FC = () => {
+  React.useEffect(() => {
+    const el = document.scrollingElement || document.documentElement;
+    if (el && 'scrollTo' in el) (el as HTMLElement).scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    (document.body as HTMLElement).scrollTop = 0;
+    (document.documentElement as HTMLElement).scrollTop = 0;
+  }, []);
   return (
     <article className="col" style={{ gap: 16 }}>
       <h1 style={{ margin: 0 }}>Политика конфиденциальности</h1>

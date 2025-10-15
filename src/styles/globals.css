@@ -187,7 +187,7 @@ header {
 }
 
 /* Privacy: keep only pill background and remove page-wide gray */
-header.solid .nav-bar { background: rgba(52,52,52,0.65); }
+header.solid .nav-bar { background: #22D4EA; }
 header.solid .nav-chip { color: #fff; }
 header.solid .cta-try-now { background: #fff !important; color: #121212 !important; }
 
