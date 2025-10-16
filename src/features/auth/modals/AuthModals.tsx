@@ -39,23 +39,11 @@ export const AuthModals: React.FC = () => {
 
   const passwordError = (value: string): string | null => {
     if (!value) return 'Введите пароль';
-    const checks: Array<{ ok: boolean; msg: string }> = [
-      { ok: value.length >= 8, msg: 'Минимум 8 символов' },
-      { ok: /[a-z]/.test(value), msg: 'Минимум 1 строчная буква (a-z)' },
-      { ok: /[A-Z]/.test(value), msg: 'Минимум 1 заглавная буква (A-Z)' },
-      { ok: /[0-9]/.test(value), msg: 'Минимум 1 цифра (0-9)' },
-      { ok: /[@$!%*?&]/.test(value), msg: 'Минимум 1 специальный символ (@$!%*?&)' },
-    ];
-    const failed = checks.filter(c => !c.ok).map(c => c.msg);
-    return failed.length ? failed.join('. ') : null;
+    return value.length >= 8 ? null : 'Минимум 8 символов';
   };
 
   const getPasswordChecks = (value: string) => ({
     len: value.length >= 8,
-    lower: /[a-z]/.test(value),
-    upper: /[A-Z]/.test(value),
-    digit: /[0-9]/.test(value),
-    special: /[@$!%*?&]/.test(value),
   });
 
   const resetFields = () => { setEmail(''); setPassword(''); setConfirmPassword(''); setFullName(''); };
@@ -206,76 +194,74 @@ export const AuthModals: React.FC = () => {
                   <span style={{ color:'#ef4444', fontSize: 12 }}>{regEmailError}</span>
                 )}
 
-                {/* Password */}
-                <div className="auth-field" style={{ position:'relative' }}>
-                  <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Пароль</span>
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    className="auth-input"
-                    style={{
-                      width:'100%', height: 48, border:'none', background:'transparent',
-                      color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
-                      outline:'none'
-                    }}
-                    name="new-password"
-                    autoComplete="new-password"
-                  />
-                  <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
-                    {showPassword ? (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a19.87 19.87 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.86 19.86 0 0 1-3.87 5.14M14.12 9.88a3 3 0 1 1-4.24 4.24" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="#ffffff" strokeWidth="2"/></svg>
-                    ) : (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
-                    )}
-                  </button>
-                </div>
-                {/* Password checklist under the field */}
-                <div style={{ marginTop: 6, marginLeft: 14, color:'#9ca3af', fontSize: 12, lineHeight: 1.4 }}>
-                  {(() => {
-                    const c = getPasswordChecks(password);
-                    const Item: React.FC<{ ok: boolean; text: string }> = ({ ok, text }) => (
-                      <div style={{ display:'flex', alignItems:'center', gap: 6, color: ok ? '#10b981' : '#ef4444' }}>
-                        <span>{ok ? '✔' : '✖'}</span>
-                        <span>{text}</span>
+                {(() => {
+                  const showPwdHint = password.length > 0 && password.length < 8;
+                  return (
+                    <div style={{ display:'flex', flexDirection:'column', gap: showPwdHint ? 6 : 8 }}>
+                      {/* Password */}
+                      <div className="auth-field" style={{ position:'relative' }}>
+                        <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Пароль</span>
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={e => setPassword(e.target.value)}
+                          className="auth-input"
+                          style={{
+                            width:'100%', height: 48, border:'none', background:'transparent',
+                            color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
+                            outline:'none'
+                          }}
+                          name="new-password"
+                          autoComplete="new-password"
+                        />
+                        <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
+                          {showPassword ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a19.87 19.87 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.86 19.86 0 0 1-3.87 5.14M14.12 9.88a3 3 0 1 1-4.24 4.24" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="#ffffff" strokeWidth="2"/></svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
+                          )}
+                        </button>
                       </div>
-                    );
-                    return (
-                      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', columnGap: 16, rowGap: 4 }}>
-                        <Item ok={c.len} text="Минимум 8 символов" />
-                        <Item ok={c.lower} text="1 строчная буква (a-z)" />
-                        <Item ok={c.upper} text="1 заглавная буква (A-Z)" />
-                        <Item ok={c.digit} text="1 цифра (0-9)" />
-                        <Item ok={c.special} text="1 спецсимвол (@$!%*?&)" />
-                      </div>
-                    );
-                  })()}
-                </div>
 
-                {/* Confirm password */}
-                <div className="auth-field" style={{ position:'relative' }}>
-                  <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Подтвердите пароль</span>
-                  <input
-                    type={showPassword2 ? 'text' : 'password'}
-                    value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
-                    className="auth-input"
-                    style={{
-                      width:'100%', height: 48, border:'none', background:'transparent',
-                      color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
-                      outline:'none'
-                    }}
-                    name="new-password-confirm"
-                    autoComplete="new-password"
-                  />
-                  <button type="button" onClick={() => setShowPassword2(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
-                    {showPassword2 ? (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a19.87 19.87 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.86 19.86 0 0 1-3.87 5.14M14.12 9.88a3 3 0 1 1-4.24 4.24" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="#ffffff" strokeWidth="2"/></svg>
-                    ) : (
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
-                    )}
-                  </button>
-                </div>
+                      {/* Password checklist under the field (conditional) */}
+                      {showPwdHint && (
+                        <div style={{ marginTop: 2, marginLeft: 8, color:'#9ca3af', fontSize: 12, lineHeight: 1.4 }}>
+                          <div style={{ display:'grid', gridTemplateColumns:'1fr', rowGap: 4 }}>
+                            <div style={{ display:'flex', alignItems:'center', gap: 4, color:'#ef4444' }}>
+                              <span>✖</span>
+                              <span>Минимум 8 символов</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Confirm password */}
+                      <div className="auth-field" style={{ position:'relative' }}>
+                        <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Подтвердите пароль</span>
+                        <input
+                          type={showPassword2 ? 'text' : 'password'}
+                          value={confirmPassword}
+                          onChange={e => setConfirmPassword(e.target.value)}
+                          className="auth-input"
+                          style={{
+                            width:'100%', height: 48, border:'none', background:'transparent',
+                            color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
+                            outline:'none'
+                          }}
+                          name="new-password-confirm"
+                          autoComplete="new-password"
+                        />
+                        <button type="button" onClick={() => setShowPassword2(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
+                          {showPassword2 ? (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20C5 20 1 12 1 12a19.87 19.87 0 0 1 5.06-5.94M9.9 4.24A10.94 10.94 0 0 1 12 4c7 0 11 8 11 8a19.86 19.86 0 0 1-3.87 5.14M14.12 9.88a3 3 0 1 1-4.24 4.24" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><line x1="1" y1="1" x2="23" y2="23" stroke="#ffffff" strokeWidth="2"/></svg>
+                          ) : (
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" stroke="#BDBDBD" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><circle cx="12" cy="12" r="3" stroke="#BDBDBD" strokeWidth="2"/></svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
                 {regConfirmError && (
                   <span style={{ color:'#ef4444', fontSize: 12 }}>{regConfirmError}</span>
                 )}

@@ -107,6 +107,12 @@ a { color: inherit; text-decoration: none; }
   box-sizing: border-box;
 }
 
+/* Laptop (1024–1440px): добавить комфортные боковые отступы */
+@media (min-width: 1024px) and (max-width: 1440px) {
+  .container { padding: 0 40px; }
+  .nav-bar { width: calc(100% - 64px); }
+}
+
 /* Container responsive */
 @media (max-width: 768px) {
   .container { padding: 0 30px; }
@@ -1075,6 +1081,31 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 .how-item { display: grid; grid-template-columns: 30px 1fr; column-gap: 20px; align-items: start; }
 .how-num { color: #c0c3c7; }
 .how-text { font-weight: 400; font-size: 32px; line-height: 1em; letter-spacing: -0.015625em; font-family: 'Comfortaa', sans-serif; color: var(--text); white-space: pre-line; }
+
+/* Rules (How) — desktop downscaling and left offset from 1580px to 820px */
+@media (max-width: 1580px) {
+  .how.container { padding: 0 96px; }
+  .how-text { font-size: 30px; }
+}
+@media (max-width: 1440px) {
+  .how.container { padding: 0 80px; }
+  .how-text { font-size: 28px; }
+}
+@media (max-width: 1360px) {
+  .how.container { padding: 0 72px; }
+  .how-text { font-size: 26px; }
+}
+@media (max-width: 1200px) {
+  .how.container { padding: 0 64px; }
+  .how-text { font-size: 24px; }
+}
+@media (max-width: 1024px) and (min-width: 821px) {
+  .how.container { padding-left: 40px; }
+  .how-text { font-size: 22px; }
+}
+@media (max-width: 900px) and (min-width: 821px) {
+  .how-text { font-size: 20px; }
+}
 
 /* How it works responsive */
 @media (max-width: 768px) {
