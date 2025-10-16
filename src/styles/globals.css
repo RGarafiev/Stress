@@ -876,6 +876,10 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 .care-title { font-size: 64px; line-height: 0.8829em; margin: 0 0 0 2px; color: var(--text); font-weight: 400; font-family: 'Comfortaa', sans-serif; letter-spacing: -0.03125em; }
 .care-title span { display: block; color: var(--muted); font-weight: 400; }
 .care-title-dim { color: var(--muted); }
+/* Laptop widths: add small left offset for the title */
+@media (max-width: 1550px) and (min-width: 1025px) {
+  .care-title { margin-left: 44px; }
+}
 .care-head { 
   position: absolute;
   top: 0;
@@ -971,25 +975,25 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 .care-text { color: var(--text); max-width: 520px; }
 .care-note { color: var(--text); font-size: 20px; line-height: 1.1em; letter-spacing: -0.025em; font-family: 'Comfortaa', sans-serif; }
 .care-title-desc { 
-  font-family: 'Onest', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 32px;
-  line-height: 1.1em;
+  font-size: 32px; /* макет */
+  line-height: 32px; /* 100% по макету */
   display: block;
   letter-spacing: -0.5px;
-  color: #000000;
+  color: #121212; /* макет */
   margin: 0 0 16px 0;
 }
 .care-description { 
-  font-family: 'Onest', sans-serif;
+  font-family: 'Comfortaa', sans-serif;
   font-style: normal;
   font-weight: 400;
-  font-size: 19px;
-  line-height: 1.15em;
+  font-size: 20px; /* макет */
+  line-height: 22px; /* 110% по макету */
   display: block;
   letter-spacing: -0.5px;
-  color: rgba(0, 0, 0, 0.45);
+  color: rgba(18, 18, 18, 0.4); /* макет */
   margin: 0 0 12px 0;
 }
 .care-cta { 
@@ -1322,8 +1326,8 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 @media (max-width: 1360px) and (min-width: 769px) {
   .about-visual { order: 2; }
   .about-content { order: 1; margin-left: 0; }
-  /* approx original size minus ~50px; shift ~30% левее и ~10% ниже */
-  .about-image-container { transform: translate(-30%, 10%) scale(0.94); transform-origin: right top; margin-left: auto; }
+  /* approx original size minus ~50px; shift ~30% левее и ~10% ниже. Добавлен правый отступ */
+  .about-image-container { transform: translate(-30%, 10%) scale(0.94); transform-origin: right top; margin-left: auto; margin-right: 24px; }
   /* reset internal offsets to desktop defaults so scaling behaves predictably */
   .about-blob-behind { left: 400px; }
   .about-person-image { left: 220px; }
@@ -1332,13 +1336,22 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 
 /* ≤890px (но >768px): ещё левее и на 10% меньше */
 @media (max-width: 890px) and (min-width: 769px) {
-  .about-image-container { transform: translate(-40%, 12%) scale(0.85); transform-origin: right top; margin-left: auto; }
+  /* Сильнее уводим влево и чуть уменьшаем, добавляем безопасный отступ справа */
+  .about-image-container { transform: translate(-50%, 12%) scale(0.78); transform-origin: right top; margin-left: auto; margin-right: 40px; }
+  .about-visual { overflow: visible; }
 }
-@media (max-width: 1024px) {
+/* 1100–891px: ещё чуть меньше и добавим больше пространства справа */
+@media (max-width: 1100px) and (min-width: 891px) {
+  .about-image-container { transform: translate(-40%, 12%) scale(0.84); transform-origin: right top; margin-left: auto; margin-right: 36px; }
+}
+@media (max-width: 1024px) and (min-width: 769px) {
   .about-image-container {
     width: 600px;
     height: 400px;
-    transform: translateX(-20px);
+    transform: translate(-52%, 10%) scale(0.82); /* уводим влево и уменьшаем, чтобы не упирался в край */
+    transform-origin: right top;
+    margin-left: auto;
+    margin-right: 40px; /* безопасный зазор справа */
   }
   
   .about-light-blob {
