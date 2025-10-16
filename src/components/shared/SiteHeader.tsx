@@ -178,6 +178,12 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
             </button>
           </div>
         )}
+        {/* Tablet CTA (500–840px): show only for guests, left of burger */}
+        {!user && (
+          <div className="tablet-cta">
+            <Button className="cta-try-now" variant="try-now" onClick={() => open('login')}>Попробовать сейчас</Button>
+          </div>
+        )}
         <BurgerMenu />
       </div>
       <div className="auth-inline">

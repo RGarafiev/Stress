@@ -37,6 +37,8 @@
 html {
   max-width: 100%;
   overflow-x: hidden;
+  /* предотвращает авто-увеличение текста на iOS */
+  -webkit-text-size-adjust: 100%;
 }
 
 #root {
@@ -58,7 +60,12 @@ body {
 
 /* Auth modal inputs: keep dark even on autofill */
 .auth-field { background:#2f3134; border-radius: 12px; position: relative; }
-.auth-input { background: transparent !important; color: #e6e6e6 !important; border: none !important; outline: none !important; box-shadow: none !important; }
+/* Фикс iOS auto-zoom: шрифт не меньше 16px */
+.auth-input { background: transparent !important; color: #e6e6e6 !important; border: none !important; outline: none !important; box-shadow: none !important; font-size: 16px !important; line-height: 1.2 !important; }
+/* на всякий случай, если класс не применён */
+.auth-field input,
+.auth-field select,
+.auth-field textarea { font-size: 16px !important; line-height: 1.2 !important; }
 .auth-input:focus { outline: none !important; }
 .auth-input::placeholder { color: #a9a9a9; opacity: 0.6; }
 input.auth-input:-webkit-autofill,
@@ -205,7 +212,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
     max-width: none;
     min-width: 0;
     height: 72px;
-    padding: 0 16px;
+    padding: 0 21px;
     justify-content: space-between;
     margin: 0 auto;
     position: relative;
@@ -221,7 +228,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .nav-right {
     display: block !important;
     position: absolute !important;
-    right: 16px !important;
+    right: 21px !important;
     left: auto !important;
     top: 10px !important;
     transform: none !important;
@@ -244,6 +251,14 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 /* Поджимать кнопку на сверхузких ширинах, чтобы не перекрывала бургер */
 @media (max-width: 360px) {
   .nav-right button { padding: 0 10px !important; min-width: 136px !important; height: 38px !important; font-size: 13px !important; }
+}
+/* 385px и уже — слегка уменьшаем CTA, чтобы не прилипал слева */
+@media (max-width: 385px) {
+  .nav-right button { transform: scale(0.9); transform-origin: right center; }
+}
+/* 365px и уже — ещё −10% размера CTA */
+@media (max-width: 365px) {
+  .nav-right button { transform: scale(0.8); transform-origin: right center; }
 }
 @media (max-width: 340px) {
   .nav-right button { padding: 0 8px !important; min-width: 128px !important; height: 36px !important; font-size: 12px !important; }
@@ -485,6 +500,9 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .nav-center { gap: 14px; }
 }
 
+/* По умолчанию планшетная CTA скрыта, показываем только в нужных брейкпоинтах */
+.tablet-cta { display: none; }
+
 /* После 915px ещё раз пополам: 25px → ~12px (только ширина) */
 @media (max-width: 915px) and (min-width: 769px) {
   .nav-right .cta-try-now { padding: 0 12px !important; }
@@ -545,6 +563,9 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .nav-center { display: none !important; }
   .nav-right { display: none !important; }
   .burger-button { display: flex !important; position: absolute; right: 40px; top: 50%; transform: translateY(-50%); }
+  /* CTA для гостей слева от бургера (769–840) */
+  .tablet-cta { display: flex !important; position: absolute; right: 78px; top: 50%; transform: translateY(-50%); }
+  .tablet-cta .cta-try-now { height: 48px !important; padding: 0 18px !important; font-size: 16px !important; }
 }
 
 /* 840–769px: отдельная иконка аккаунта слева от бургера */
@@ -602,11 +623,14 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
     align-items: center; 
     justify-content: center; 
   }
+  /* CTA для гостей слева от бургера (500–768) */
+  .tablet-cta { display: flex !important; position: absolute; right: 60px; top: 50%; transform: translateY(-50%); }
+  .tablet-cta .cta-try-now { height: 44px !important; padding: 0 16px !important; font-size: 16px !important; }
 }
 
 @media (max-width: 480px) {
   .nav-bar {
-    padding: 0 16px;
+    padding: 0 21px;
     min-height: 56px;
   }
   
@@ -632,7 +656,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .account-phone { 
     display: flex !important; 
     position: absolute; 
-    right: 16px; 
+    right: 21px; 
     top: 50%; 
     transform: translateY(-50%);
     align-items: center; 
@@ -644,7 +668,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .nav-bar {
     width: calc(100% - 16px);
     max-width: calc(100% - 16px);
-    padding: 0 12px;
+    padding: 0 17px;
     min-height: 56px;
     margin: 0 8px;
   }
