@@ -1607,8 +1607,9 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .not-found-main {
     position: relative;
     width: 100%;
-    /* Заполняем доступное пространство и выдерживаем отступ под навбар */
-    flex: 1 0 auto;
+    /* Не тянем секцию на весь экран и не связываем высоту страницы с фоном */
+    min-height: 480px;
+    flex: 0 0 auto;
     padding-top: 80px;
     border-radius: 0 0 30px 30px;
     overflow: hidden;
@@ -1665,48 +1666,27 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   /* Not Found Page Responsive */
   @media (max-width: 768px) {
     .not-found-page {
-      min-height: 100dvh;
-      min-height: 100svh;
+      height: 100dvh;
+      height: 100svh;
+      overflow: hidden; /* без скролла на 404 */
     }
-    .not-found-main { padding-top: 64px; }
+    .not-found-main { padding-top: 64px; height: clamp(420px, 52vh, 560px); min-height: 420px; }
     
-    .not-found-title {
-      font-size: 48px;
-      margin: 0 0 24px 0;
-    }
+    .not-found-title { font-size: 46px; margin: 0 0 24px 0; }
     
-    .not-found-subtitle {
-      font-size: 18px;
-      margin: 0 0 24px 0;
-      max-width: 100%;
-    }
+    .not-found-subtitle { font-size: 18px; margin: 0 0 24px 0; max-width: 520px; }
+    .not-found-content .btn { height: 56px; padding: 0 24px; font-size: 18px; min-width: 260px; border-radius: 1000px; }
     
-    .not-found-page .footer {
-      margin-top: 0;
-    }
+    .not-found-page .footer { margin-top: auto; }
   }
 
   @media (max-width: 480px) {
-    .not-found-page {
-      min-height: 100dvh;
-      min-height: 100svh;
-    }
-    .not-found-main { padding-top: 56px; }
-    
-    .not-found-title {
-      font-size: 36px;
-      margin: 0 0 20px 0;
-    }
-    
-    .not-found-subtitle {
-      font-size: 16px;
-      margin: 0 0 20px 0;
-      max-width: 100%;
-    }
-    
-    .not-found-page .footer {
-      margin-top: 0;
-    }
+    .not-found-page { height: 100dvh; height: 100svh; overflow: hidden; }
+    .not-found-main { padding-top: 56px; height: clamp(380px, 58vh, 520px); min-height: 360px; }
+    .not-found-title { font-size: 40px; margin: 0 0 20px 0; }
+    .not-found-subtitle { font-size: 16px; margin: 0 0 20px 0; max-width: 320px; }
+    .not-found-content .btn { height: 54px; padding: 0 22px; font-size: 16px; min-width: 240px; border-radius: 1000px; }
+    .not-found-page .footer { margin-top: auto; }
   }
 
   /* Button Hover States */
