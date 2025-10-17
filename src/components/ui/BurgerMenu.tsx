@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Button } from './Button';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../app/providers/AuthProvider';
 
 export const BurgerMenu: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, signOut } = useAuth();
 
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  function goToSection(sectionId: 'rules' | 'mission' | 'blog'): void {
+    // Закрываем меню сразу
+    setIsOpen(false);
+    if (location.pathname !== '/') {
+      navigate('/', { state: { scrollTo: sectionId } });
+      return;
+    }
+    const el = document.getElementById(sectionId);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   return (
     <>
@@ -50,13 +61,13 @@ export const BurgerMenu: React.FC = () => {
               <Link to="/" className="mobile-sheet-item" onClick={toggleMenu}>
                 <span className="mobile-item-label">Главная</span>
               </Link>
-              <a href="#rules" className="mobile-sheet-item" onClick={toggleMenu}>
+              <a href="#rules" className="mobile-sheet-item" onClick={(e) => { e.preventDefault(); goToSection('rules'); }}>
                 <span className="mobile-item-label">Правила</span>
               </a>
-              <a href="#mission" className="mobile-sheet-item" onClick={toggleMenu}>
+              <a href="#mission" className="mobile-sheet-item" onClick={(e) => { e.preventDefault(); goToSection('mission'); }}>
                 <span className="mobile-item-label">Миссия игры</span>
               </a>
-              <a href="#blog" className="mobile-sheet-item" onClick={toggleMenu}>
+              <a href="#blog" className="mobile-sheet-item" onClick={(e) => { e.preventDefault(); goToSection('blog'); }}>
                 <span className="mobile-item-label">Статьи</span>
               </a>
 

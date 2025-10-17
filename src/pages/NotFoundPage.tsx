@@ -15,6 +15,27 @@ export const NotFoundPage: React.FC = () => {
     background: `linear-gradient(rgba(13, 13, 13, 0.65), rgba(13, 13, 13, 0.65)), url('${BASENAME}/images/404-bg-18b585.png')`,
   };
 
+  // Disable page scroll and hide global decorative blobs only on 404
+  React.useEffect(() => {
+    const html = document.documentElement as HTMLElement;
+    const body = document.body as HTMLElement;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    html.style.overflow = 'hidden';
+    body.style.overflow = 'hidden';
+
+    const blobs = document.querySelector('.page-blobs') as HTMLElement | null;
+    const prevBlobsDisplay = blobs ? blobs.style.display : undefined;
+    if (blobs) blobs.style.display = 'none';
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      if (blobs && prevBlobsDisplay !== undefined) blobs.style.display = prevBlobsDisplay;
+      if (blobs && prevBlobsDisplay === undefined) blobs.style.removeProperty('display');
+    };
+  }, []);
+
   return (
     <div className="not-found-page">
       {/* Main Content Area */}
