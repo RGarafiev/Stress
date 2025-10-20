@@ -1,4 +1,4 @@
-import { getToken, saveSession, clearSession } from '../auth/session';
+import { getToken, saveRefreshedToken, clearSession } from '../auth/session';
 
 export type ApiValidationErrors = Record<string, string[]>;
 
@@ -31,11 +31,13 @@ async function doFetch<T>(path: string, init: RequestInit = {}): Promise<{ res: 
   const url = API_BASE_URL ? `${API_BASE_URL}${normalizedPath}` : normalizedPath;
   const token = getToken();
 
+  // Build headers so that explicit headers passed in init.headers take precedence,
+  // especially Authorization when we retry with a refreshed token
   const headers: HeadersInit = {
     'Accept': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
     ...(init.body ? { 'Content-Type': 'application/json' } : {}),
     ...(init.headers || {}),
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
   };
 
   const res = await fetch(url, { ...init, headers });
@@ -60,13 +62,13 @@ export async function requestRefresh(): Promise<string | null> {
         ...(getToken() ? { 'Authorization': `Bearer ${getToken()}` } : {}),
       },
     });
-    const json = (await res.json()) as ApiEnvelope<{ token: string }>;
+    const json = (await res.json()) as ApiEnvelope<{ token: string; token_type?: string; expires_in?: number }>;
     if (!res.ok || json.success === false || !json.data?.token) {
       return null;
     }
     const newToken = json.data.token;
-    // Persist new token, keep remembered state by writing to localStorage by default
-    saveSession(newToken);
+    // Persist new token to the same storage where the previous token lived
+    saveRefreshedToken(newToken);
     return newToken;
   } catch {
     return null;
@@ -84,9 +86,9 @@ export async function apiFetch<T>(path: string, init: RequestInit = {}): Promise
         ...init,
         headers: {
           'Accept': 'application/json',
+          'Authorization': `Bearer ${newToken}`,
           ...(init.body ? { 'Content-Type': 'application/json' } : {}),
           ...(init.headers || {}),
-          'Authorization': `Bearer ${newToken}`,
         },
       };
       const retry = await doFetch<T>(path, retryInit);

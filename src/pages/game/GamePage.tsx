@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Unity, useUnityContext } from 'react-unity-webgl';
 import { useModal } from '../../app/providers/ModalProvider';
 import { getToken } from '../../app/auth/session';
+import { requestRefresh } from '../../app/api/client';
 import { SiteHeader } from '../../components/shared/SiteHeader';
 import {BASENAME} from "../../index";
 
@@ -59,18 +60,27 @@ const GameCanvas: React.FC = () => {
 
   useEffect(() => {
     if (!isLoaded) return;
-    const token = getToken();
-    if (token) {
-      try { sendMessage('API', 'SetToken', token); } catch {}
-    }
-    const handleRequest = () => {
-      const t = getToken();
-      if (t) {
-        try { sendMessage('API', 'SetToken', t); } catch {}
+    let cancelled = false;
+
+    const syncTokenToUnity = async () => {
+      const refreshed = await requestRefresh();
+      const latest = refreshed || getToken();
+      if (!cancelled && latest) {
+        try { sendMessage('API', 'SetToken', latest); } catch {}
       }
     };
+
+    void syncTokenToUnity();
+
+    const handleRequest = () => { void syncTokenToUnity(); };
     addEventListener('RequestAuthToken', handleRequest);
-    return () => { removeEventListener('RequestAuthToken', handleRequest); };
+
+    const intervalId = window.setInterval(syncTokenToUnity, 8 * 60 * 1000);
+    return () => {
+      cancelled = true;
+      removeEventListener('RequestAuthToken', handleRequest);
+      window.clearInterval(intervalId);
+    };
   }, [isLoaded, sendMessage, addEventListener, removeEventListener]);
 
   // disable body scroll while on game page and remove white background
