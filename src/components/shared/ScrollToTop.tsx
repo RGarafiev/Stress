@@ -112,11 +112,14 @@ export const ScrollToTop: React.FC = () => {
         transition: 'opacity 0.3s ease, transform 0.3s ease'
       }}
     >
-      <img
-        src="/images/arrow-top5-svgrepo-com.svg"
-        alt="Наверх"
-        style={{ width: '28px', height: '28px', filter: 'brightness(0) invert(1)' }}
-      />
+      {/* Встроенная SVG, чтобы не зависеть от путей к статикам на dev-сервере */}
+      <svg
+        width="28" height="28" viewBox="0 0 64 64" aria-hidden="true"
+        style={{ display: 'block' }}
+      >
+        <polyline points="16 48 32 32 48 48" stroke="#ffffff" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <polyline points="16 32 32 16 48 32" stroke="#ffffff" strokeWidth="4" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
     </button>
   );
 };

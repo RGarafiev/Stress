@@ -1542,6 +1542,10 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 .footer-nav { display: grid; gap: 8px; color: var(--text); font-family: 'Comfortaa', sans-serif; font-size: 16px; margin-top: 40px; margin-left: 220px; }
 .footer-nav a { color: var(--text); text-decoration: none; }
 .footer-brand { font-weight: 700; text-align: center; color: var(--text); font-family: 'Comfortaa', sans-serif; font-size: 16px; margin-top: 40px; margin-right: 220px; }
+/* Footer logo: reuse header raster via LogoSvg */
+.footer-logo-link { display: inline-block; line-height: 0; width: 133px; height: 61px; }
+.footer-logo { display: block; width: 100%; height: 100%; }
+.footer-logo-img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .footer-blobs { position: absolute; inset: 0; z-index: 1; pointer-events: none; display: flex; justify-content: center; }
   .footer-blobs-inner { position: relative; width: var(--container-max); height: 100%; }
   .footer-blob-left-svg { position: absolute; left: -100px; bottom: -20px; }
@@ -1564,6 +1568,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .footer-inner { flex-direction: column; gap: 24px; }
   .footer-nav { margin-left: 0; margin-top: 0; }
   .footer-brand { margin-right: 0; margin-top: 0; }
+  .footer-logo-link { width: 120px; height: 55px; }
   .footer-blob-center-svg { width: 280px; }
   .footer-blob-left-svg { left: -50px; }
   .footer-blob-right-svg { right: -50px; }
@@ -1580,7 +1585,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .footer-nav { font-size: 16px; }
   .footer-brand { font-size: 14px; text-align: right; margin-top: 26px; }
   /* Footer logo size on mobile */
-  .footer-brand svg { width: 81px; height: 37px; }
+  .footer-logo-link { width: 81px; height: 37px; }
   .footer-blob-center-svg { display: none; }
   /* Hide desktop blobs, show mobile ones */
   .footer-blob-left-svg, .footer-blob-right-svg { display: none; }
