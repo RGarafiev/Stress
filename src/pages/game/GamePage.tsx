@@ -39,6 +39,8 @@ export const GamePage: React.FC = () => {
 
 const GameCanvas: React.FC = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(true);
+  const [viewportWidth, setViewportWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const initialToken = getToken();
   
   const unityConfig = {
@@ -139,6 +141,13 @@ const GameCanvas: React.FC = () => {
     return () => window.removeEventListener('resize', update);
   }, []);
 
+  // track viewport width for simple responsive sizes of the toggle
+  useEffect(() => {
+    const onResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
   return (
     <div style={{
       position: 'fixed',
@@ -150,10 +159,64 @@ const GameCanvas: React.FC = () => {
       overflow: 'hidden',
       zIndex: 1
     }}>
-      {/* Fixed Navbar */}
-      <div id="game-header" style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1000 }}>
+      {/* Fixed Navbar with collapse */}
+      <div 
+        id="game-header" 
+        style={{ 
+          position: 'absolute', top: 0, left: 0, right: 0, zIndex: 1000,
+          transform: isHeaderCollapsed ? 'translateY(-110%)' : 'translateY(0)',
+          transition: 'transform 280ms cubic-bezier(.2,.8,.2,1)',
+          pointerEvents: isHeaderCollapsed ? 'none' : 'auto'
+        }}
+      >
         <SiteHeader embedded />
       </div>
+
+      {/* Header toggle button */}
+      {(() => {
+        // Fixed size across all widths
+        const toggleWidth = 36;
+        const toggleHeight = 28;
+        // Place button below the header at all widths when header is visible
+        const top = isHeaderCollapsed ? 8 : Math.max(8, headerHeight + 6);
+        return (
+          <button
+            aria-label={isHeaderCollapsed ? 'Показать меню' : 'Скрыть меню'}
+            onClick={() => setIsHeaderCollapsed(s => !s)}
+            style={{
+              position: 'absolute',
+              top,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: 1002,
+              width: toggleWidth,
+              height: toggleHeight,
+              borderRadius: 9999,
+              border: '1px solid rgba(255,255,255,0.25)',
+              background: 'rgba(0,0,0,0.45)',
+              color: '#fff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              backdropFilter: 'blur(6px)',
+              transition: 'top 280ms cubic-bezier(.2,.8,.2,1), background 200ms ease'
+            }}
+          >
+            {/* Base icon is DOWN; rotate to UP when header is expanded */}
+            <svg
+              width={viewportWidth <= 768 ? 20 : 16}
+              height={viewportWidth <= 768 ? 20 : 16}
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ transform: isHeaderCollapsed ? 'none' : 'rotate(180deg)', transition: 'transform 220ms ease' }}
+            >
+              <path d="M6 9l6 6 6-6" stroke="#ffffff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </button>
+        );
+      })()}
       
       {/* Loading screen */}
       {!isLoaded && (

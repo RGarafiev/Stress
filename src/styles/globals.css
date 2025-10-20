@@ -199,6 +199,11 @@ header {
   box-sizing: border-box;
 }
 
+/* 500–1539px: добавляем боковые отступы, чтобы хедер не прилипал к краям */
+@media (min-width: 500px) and (max-width: 1539px) {
+  .nav-bar { width: calc(100% - 64px); }
+}
+
 /* Privacy: keep only pill background and remove page-wide gray */
 header.solid .nav-bar { background: #22D4EA; }
 header.solid .nav-chip { color: #fff; }
@@ -727,7 +732,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 /* Modal */
 .modal-backdrop {
   position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-  display: flex; align-items: center; justify-content: center; z-index: 50;
+  display: flex; align-items: center; justify-content: center; z-index: 65;
   padding: 16px;
 }
 .modal-content {

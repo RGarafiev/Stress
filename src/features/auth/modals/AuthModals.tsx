@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Modal } from '../../../components/ui/Modal';
 import { Input } from '../../../components/ui/Input';
 import { Button } from '../../../components/ui/Button';
@@ -21,6 +21,20 @@ export const AuthModals: React.FC = () => {
   const [tab, setTab] = useState<'login'|'register'>('login');
   const [showPassword, setShowPassword] = useState(false);
   const [showPassword2, setShowPassword2] = useState(false);
+
+  // Autofocus на поле email при открытии вкладки входа
+  const emailInputRef = useRef<HTMLInputElement | null>(null);
+  const emailIsEmpty = (email.trim().length === 0);
+  useEffect(() => {
+    if (current === 'login') {
+      // небольшой таймаут, чтобы модалка успела смонтироваться
+      const id = window.setTimeout(() => {
+        emailInputRef.current?.focus();
+        try { emailInputRef.current?.setSelectionRange(0, emailInputRef.current.value.length); } catch {}
+      }, 0);
+      return () => window.clearTimeout(id);
+    }
+  }, [current]);
 
   // Inline validation error states
   const [loginEmailError, setLoginEmailError] = useState<string | null>(null);
@@ -67,6 +81,27 @@ export const AuthModals: React.FC = () => {
           <div key={tab} style={{ display:'flex', flexDirection:'column', gap: 24 }}>
             {tab === 'login' ? (
               <>
+                {/* Hidden autofill bait fields only when email is empty, to prevent unwanted refill */}
+                {emailIsEmpty && (
+                  <>
+                    <input
+                      type="text"
+                      name="username"
+                      autoComplete="username"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+                    />
+                    <input
+                      type="password"
+                      name="password"
+                      autoComplete="current-password"
+                      tabIndex={-1}
+                      aria-hidden="true"
+                      style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+                    />
+                  </>
+                )}
                 {/* Email */}
                 <div className="field-wrap" style={{ display:'flex', flexDirection:'column', gap: 6 }}>
                   <div className="auth-field" style={{ position:'relative' }}>
@@ -83,11 +118,12 @@ export const AuthModals: React.FC = () => {
                         outline:'none'
                       }}
                       inputMode="email"
-                      name="auth-email-login"
-                      autoComplete="off"
+                      name={emailIsEmpty ? 'auth-email-login' : 'username'}
+                      autoComplete={emailIsEmpty ? 'off' : 'username'}
                       autoCorrect="off"
                       autoCapitalize="none"
                       spellCheck={false}
+                      ref={emailInputRef}
                     />
                     {/* Mail icon */}
                     <span style={{ position:'absolute', right: 10, top: '50%', transform:'translateY(-50%)', opacity: .85 }}>
@@ -113,8 +149,8 @@ export const AuthModals: React.FC = () => {
                         color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
                         outline:'none'
                       }}
-                      name="current-password"
-                      autoComplete="current-password"
+                      name="auth-password-login"
+                      autoComplete="off"
                     />
                     <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
                       {showPassword ? (
@@ -141,6 +177,23 @@ export const AuthModals: React.FC = () => {
             ) : (
               <>
                 {/* Full name */}
+                {/* Hidden autofill bait fields to reduce unwanted autofill on registration */}
+                <input
+                  type="text"
+                  name="username"
+                  autoComplete="username"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+                />
+                <input
+                  type="password"
+                  name="password"
+                  autoComplete="new-password"
+                  tabIndex={-1}
+                  aria-hidden="true"
+                  style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
+                />
                 <div className="auth-field" style={{ position:'relative' }}>
                   <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Имя и фамилия</span>
                   <input
@@ -201,7 +254,7 @@ export const AuthModals: React.FC = () => {
                       {/* Password */}
                       <div className="auth-field" style={{ position:'relative' }}>
                         <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Пароль</span>
-                        <input
+                    <input
                           type={showPassword ? 'text' : 'password'}
                           value={password}
                           onChange={e => setPassword(e.target.value)}
@@ -211,8 +264,8 @@ export const AuthModals: React.FC = () => {
                             color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
                             outline:'none'
                           }}
-                          name="new-password"
-                          autoComplete="new-password"
+                      name="new-password"
+                      autoComplete="off"
                         />
                         <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
                           {showPassword ? (
@@ -238,7 +291,7 @@ export const AuthModals: React.FC = () => {
                       {/* Confirm password */}
                       <div className="auth-field" style={{ position:'relative' }}>
                         <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Подтвердите пароль</span>
-                        <input
+                    <input
                           type={showPassword2 ? 'text' : 'password'}
                           value={confirmPassword}
                           onChange={e => setConfirmPassword(e.target.value)}
@@ -248,8 +301,8 @@ export const AuthModals: React.FC = () => {
                             color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
                             outline:'none'
                           }}
-                          name="new-password-confirm"
-                          autoComplete="new-password"
+                      name="new-password-confirm"
+                      autoComplete="off"
                         />
                         <button type="button" onClick={() => setShowPassword2(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
                           {showPassword2 ? (
