@@ -5,7 +5,6 @@ import { GameLayout } from '../../components/layout/GameLayout';
 import { HomePage } from '../../pages/home/HomePage';
 import { GamePage } from '../../pages/game/GamePage';
 import { PrivacyPage } from '../../pages/legal/PrivacyPage';
-import { TermsPage } from '../../pages/legal/TermsPage';
 import { NotFoundPage } from '../../pages/NotFoundPage';
 import { VerifiedPage } from '../../pages/auth/VerifiedPage';
 import { VerificationFailedPage } from '../../pages/auth/VerificationFailedPage';
@@ -16,7 +15,6 @@ export const AppRoutes: React.FC = () => {
       <Route element={<MainLayout />}> 
         <Route path="/" element={<HomePage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
       </Route>
       <Route element={<GameLayout />}> 
         <Route path="/game" element={<GamePage />} />

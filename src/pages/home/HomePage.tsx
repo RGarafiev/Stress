@@ -15,6 +15,7 @@ import { AboutSection } from './AboutSection';
 import { PageBlobs } from '../../components/ui/BlobElements';
 import { HeroBackground } from '../../components/ui/HeroBackground';
 
+
 export const HomePage: React.FC = () => {
   const { open } = useModal();
   const { user, ensureAuthenticated } = useAuth();
@@ -40,37 +41,40 @@ export const HomePage: React.FC = () => {
     }
   }, [location]);
   return (
-    <div className="col" style={{ gap: 'clamp(84px, 10.5vw, 180px)', width: '100%' }}>
+    <>
+      <div className="col" style={{ gap: 'clamp(84px, 10.5vw, 180px)', width: '100%' }}>
 
-      <HeroBackground>
-        <SiteHeader embedded />
-        <Hero
-          title={<>
-            Самогочи: антистресс-игра<br/>
-            прямо в браузере
-          </>}
-          subtitle="Создай персонажа, заботься о нём и вместе находите способы справляться с тревогой мягко и с улыбкой"
-          ctaHref="/game"
-          ctaText="Начать игру"
-          onCtaClick={async () => {
-            const ok = user ? true : await ensureAuthenticated();
-            if (ok) {
-              navigate('/game', { state: { entry: 'cta' } });
-            } else {
-              open('login');
-            }
-          }}
-        />
-      </HeroBackground>
+        <HeroBackground>
+          <SiteHeader embedded />
+          <Hero
+            title={<>
+              Самогочи: антистресс-игра<br/>
+              прямо в браузере
+            </>}
+            subtitle="Создай персонажа, заботься о нём и вместе находите способы справляться с тревогой мягко и с улыбкой"
+            ctaHref="/game"
+            ctaText="Начать игру"
+            onCtaClick={async () => {
+              const ok = user ? true : await ensureAuthenticated();
+              if (ok) {
+                navigate('/game', { state: { entry: 'cta' } });
+              } else {
+                open('login');
+              }
+            }}
+          />
+        </HeroBackground>
 
-      <HowItWorks />
+        <HowItWorks />
 
-      <CareSection />
+        <CareSection />
 
-      <ArticlesSection />
+        <ArticlesSection />
 
-      <AboutSection />
-    </div>
+        <AboutSection />
+      </div>
+      
+    </>
   );
 };
 

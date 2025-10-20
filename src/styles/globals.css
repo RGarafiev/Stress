@@ -1796,6 +1796,68 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   transform: translateX(0);
 }
 
+/* Scroll to Top Button */
+.scroll-to-top {
+  position: fixed !important;
+  bottom: 32px !important;
+  right: 32px !important;
+  width: 56px !important;
+  height: 56px !important;
+  border-radius: 50% !important;
+  background: #979797 !important;
+  border: none !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #ffffff !important;
+  transition: opacity 0.3s ease, transform 0.3s ease, background 0.2s ease !important;
+  z-index: 999999 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(20px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.scroll-to-top.visible {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  transform: translateY(0) !important;
+}
+
+.scroll-to-top:hover {
+  background: #757575 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.scroll-to-top:active {
+  transform: translateY(0) !important;
+}
+
+.scroll-to-top img {
+  pointer-events: none;
+}
+
+/* Responsive scroll to top button */
+@media (max-width: 768px) {
+  .scroll-to-top {
+    width: 48px !important;
+    height: 48px !important;
+    bottom: 24px !important;
+    right: 24px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .scroll-to-top {
+    width: 44px !important;
+    height: 44px !important;
+    bottom: 20px !important;
+    right: 20px !important;
+  }
+}
+
 /* Page Blobs */
 .page-blobs {
   position: absolute;
