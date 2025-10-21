@@ -1541,6 +1541,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 .footer-inner { position: relative; display: flex; align-items: center; justify-content: space-between; z-index: 2; }
 .footer-nav { display: grid; gap: 8px; color: var(--text); font-family: 'Comfortaa', sans-serif; font-size: 16px; margin-top: 40px; margin-left: 220px; }
 .footer-nav a { color: var(--text); text-decoration: none; }
+.footer-nav .footer-nav-divider { margin-top: 12px; }
 .footer-brand { font-weight: 700; text-align: center; color: var(--text); font-family: 'Comfortaa', sans-serif; font-size: 16px; margin-top: 40px; margin-right: 220px; }
 /* Footer logo: reuse header raster via LogoSvg */
 .footer-logo-link { display: inline-block; line-height: 0; width: 133px; height: 61px; }

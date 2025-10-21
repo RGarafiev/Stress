@@ -70,7 +70,10 @@ export const SiteFooter: React.FC = () => {
           <a href="#rules" onClick={(e) => { e.preventDefault(); goToSection('rules'); }}>Правила</a>
           <a href="#mission" onClick={(e) => { e.preventDefault(); goToSection('mission'); }}>Миссия игры</a>
           <a href="#blog" onClick={(e) => { e.preventDefault(); goToSection('blog'); }}>Статьи</a>
-          <Link to="/privacy">Политика конфиденциальности</Link>
+          <Link to="/privacy" className="footer-nav-divider">Политика конфиденциальности</Link>
+          <span>
+            Обратная связь: <a href="mailto:info@sotex.ru" style={{ textDecoration: 'underline' }}>info@sotex.ru</a>
+          </span>
         </nav>
         <div className="footer-brand" aria-label="Stresshelp">
           <Link to="/" onClick={goHome} className="footer-logo-link" aria-label="Stresshelp">

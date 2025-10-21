@@ -39,7 +39,7 @@ export const GamePage: React.FC = () => {
 
 const GameCanvas: React.FC = () => {
   const [headerHeight, setHeaderHeight] = useState<number>(0);
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(true);
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(false);
   const [viewportWidth, setViewportWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
   const initialToken = getToken();
   
