@@ -88,7 +88,7 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
       <div className="nav-bar">
         <div className="nav-logo">
           <Link to="/" className="logo-link" aria-label="Stresshelp">
-            <span className="logo-desktop"><LogoSvg /></span>
+            <span className="logo-desktop"><LogoSvg variant="color" /></span>
           </Link>
         </div>
         <div className="nav-center">

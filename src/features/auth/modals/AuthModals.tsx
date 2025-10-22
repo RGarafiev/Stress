@@ -24,7 +24,6 @@ export const AuthModals: React.FC = () => {
 
   // Autofocus на поле email при открытии вкладки входа
   const emailInputRef = useRef<HTMLInputElement | null>(null);
-  const emailIsEmpty = (email.trim().length === 0);
   useEffect(() => {
     if (current === 'login') {
       // небольшой таймаут, чтобы модалка успела смонтироваться
@@ -62,6 +61,82 @@ export const AuthModals: React.FC = () => {
 
   const resetFields = () => { setEmail(''); setPassword(''); setConfirmPassword(''); setFullName(''); };
 
+  // Единая отправка формы (работает и для Enter, и для клика по кнопке)
+  const handleSubmit = async (): Promise<void> => {
+    try {
+      if (tab==='login') {
+        const eErr = emailError(email);
+        const pErr = password ? null : 'Введите пароль';
+        setLoginEmailError(eErr);
+        setLoginPasswordError(pErr);
+        if (eErr || pErr) return;
+        await auth.signIn(email, password, remember);
+        push('Добро пожаловать!', 'success');
+        close();
+      } else {
+        const nErr = fullName.trim() ? null : 'Введите имя';
+        const eErr = emailError(email);
+        const pErr = passwordError(password);
+        const cErr = password === confirmPassword ? null : 'Пароли не совпадают';
+        setRegNameError(nErr);
+        setRegEmailError(eErr);
+        setRegPasswordError(pErr);
+        setRegConfirmError(cErr);
+        if (nErr || eErr || pErr || cErr) return;
+        await auth.signUp({ name: fullName.trim(), email, password, passwordConfirmation: confirmPassword, remember });
+        push('Регистрация выполнена', 'success');
+        close();
+        open('signup-info');
+      }
+      
+    } catch (e: any) {
+      if (e instanceof ApiError) {
+        if (tab === 'login') {
+          // Auth errors
+          if (e.status === 401 || e.status === 404) {
+            setLoginPasswordError('Неверные учетные данные');
+            setLoginEmailError(null);
+            return;
+          }
+          // Validation errors from backend (e.g. 422)
+          if (e.errors) {
+            const emailErr = e.errors.email?.[0] || null;
+            const passwordErr = e.errors.password?.[0] || null;
+            setLoginEmailError(emailErr);
+            setLoginPasswordError(passwordErr);
+            const firstMsg = emailErr || passwordErr || e.message || 'Ошибка запроса';
+            push(firstMsg, 'error');
+            return;
+          }
+          // Any other API error during login → show Russian generic message
+          setLoginPasswordError('Неверные учетные данные');
+          push('Такого пользователя не существует или введены неверные данные', 'error');
+          return;
+        } else {
+          // Register: map server-side validation to specific fields
+          if (e.errors) {
+            const nameErr = e.errors.name?.[0] || null;
+            const emailErr = e.errors.email?.[0] || null;
+            const passwordErr = e.errors.password?.[0] || null;
+            const confirmErr = e.errors.password_confirmation?.[0] || e.errors.passwordConfirmation?.[0] || null;
+            setRegNameError(nameErr);
+            setRegEmailError(emailErr);
+            setRegPasswordError(passwordErr);
+            setRegConfirmError(confirmErr);
+            const firstMsg = nameErr || emailErr || passwordErr || confirmErr || e.message || 'Ошибка запроса';
+            push(firstMsg, 'error');
+            return;
+          }
+        }
+        // Fallback for API errors without field details
+        push('Ошибка запроса', 'error');
+        return;
+      }
+      // Non-API unexpected error
+      push('Ошибка запроса', 'error');
+    }
+  };
+
   return (
     <>
       <Modal 
@@ -70,6 +145,7 @@ export const AuthModals: React.FC = () => {
         contentStyle={{ background:'transparent', border:'none', boxShadow:'none', padding: 0 }}
       >
         <div style={{ background:'#121212', color:'#ffffff', padding: 24, borderRadius: 20, width: 560, maxWidth: 'calc(100vw - 32px)' }}>
+          <form autoComplete="on" onSubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
           {/* Tabs */}
           <div style={{ display:'flex', alignItems:'center', gap: 12, marginBottom: 16 }}>
             <button onClick={() => { setTab('login'); setEmail(''); setPassword(''); setConfirmPassword(''); }} style={{ background:'transparent', border:'none', color: tab==='login'?'#ffffff':'#9ca3af', fontFamily:'Comfortaa', fontSize: 16, cursor:'pointer' }}>Вход</button>
@@ -81,27 +157,6 @@ export const AuthModals: React.FC = () => {
           <div key={tab} style={{ display:'flex', flexDirection:'column', gap: 24 }}>
             {tab === 'login' ? (
               <>
-                {/* Hidden autofill bait fields only when email is empty, to prevent unwanted refill */}
-                {emailIsEmpty && (
-                  <>
-                    <input
-                      type="text"
-                      name="username"
-                      autoComplete="username"
-                      tabIndex={-1}
-                      aria-hidden="true"
-                      style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
-                    />
-                    <input
-                      type="password"
-                      name="password"
-                      autoComplete="current-password"
-                      tabIndex={-1}
-                      aria-hidden="true"
-                      style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
-                    />
-                  </>
-                )}
                 {/* Email */}
                 <div className="field-wrap" style={{ display:'flex', flexDirection:'column', gap: 6 }}>
                   <div className="auth-field" style={{ position:'relative' }}>
@@ -118,8 +173,8 @@ export const AuthModals: React.FC = () => {
                         outline:'none'
                       }}
                       inputMode="email"
-                      name={emailIsEmpty ? 'auth-email-login' : 'username'}
-                      autoComplete={emailIsEmpty ? 'off' : 'username'}
+                      name="username"
+                      autoComplete="username"
                       autoCorrect="off"
                       autoCapitalize="none"
                       spellCheck={false}
@@ -149,8 +204,8 @@ export const AuthModals: React.FC = () => {
                         color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
                         outline:'none'
                       }}
-                      name="auth-password-login"
-                      autoComplete="off"
+                      name="password"
+                      autoComplete="current-password"
                     />
                     <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
                       {showPassword ? (
@@ -177,23 +232,6 @@ export const AuthModals: React.FC = () => {
             ) : (
               <>
                 {/* Full name */}
-                {/* Hidden autofill bait fields to reduce unwanted autofill on registration */}
-                <input
-                  type="text"
-                  name="username"
-                  autoComplete="username"
-                  tabIndex={-1}
-                  aria-hidden="true"
-                  style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
-                />
-                <input
-                  type="password"
-                  name="password"
-                  autoComplete="new-password"
-                  tabIndex={-1}
-                  aria-hidden="true"
-                  style={{ position:'absolute', left: -10000, top: 'auto', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }}
-                />
                 <div className="auth-field" style={{ position:'relative' }}>
                   <span style={{ position:'absolute', left: 14, top: 6, fontSize: 12, color:'#B3B3B3', pointerEvents:'none', zIndex: 2 }}>Имя и фамилия</span>
                   <input
@@ -232,8 +270,8 @@ export const AuthModals: React.FC = () => {
                       outline:'none'
                     }}
                     inputMode="email"
-                    name="auth-email-register"
-                    autoComplete="off"
+                    name="email"
+                    autoComplete="email"
                     autoCorrect="off"
                     autoCapitalize="none"
                     spellCheck={false}
@@ -265,7 +303,7 @@ export const AuthModals: React.FC = () => {
                             outline:'none'
                           }}
                       name="new-password"
-                      autoComplete="off"
+                      autoComplete="new-password"
                         />
                         <button type="button" onClick={() => setShowPassword(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
                           {showPassword ? (
@@ -301,8 +339,8 @@ export const AuthModals: React.FC = () => {
                             color:'#E6E6E6', padding:'18px 44px 10px 14px', fontFamily:'Comfortaa, sans-serif', fontSize: 14,
                             outline:'none'
                           }}
-                      name="new-password-confirm"
-                      autoComplete="off"
+                      name="new-password"
+                      autoComplete="new-password"
                         />
                         <button type="button" onClick={() => setShowPassword2(s => !s)} style={{ position:'absolute', right: 6, top: '50%', transform:'translateY(-50%)', opacity: .85, background:'transparent', border:'none', cursor:'pointer', padding: 6 }} aria-label="Показать пароль">
                           {showPassword2 ? (
@@ -323,80 +361,8 @@ export const AuthModals: React.FC = () => {
 
             {/* Submit */}
             <Button
-              onClick={async () => {
-                try {
-                  if (tab==='login') {
-                    const eErr = emailError(email);
-                    const pErr = password ? null : 'Введите пароль';
-                    setLoginEmailError(eErr);
-                    setLoginPasswordError(pErr);
-                    if (eErr || pErr) return;
-                    await auth.signIn(email, password, remember);
-                    push('Добро пожаловать!', 'success');
-                    close();
-                  } else {
-                    const nErr = fullName.trim() ? null : 'Введите имя';
-                    const eErr = emailError(email);
-                    const pErr = passwordError(password);
-                    const cErr = password === confirmPassword ? null : 'Пароли не совпадают';
-                    setRegNameError(nErr);
-                    setRegEmailError(eErr);
-                    setRegPasswordError(pErr);
-                    setRegConfirmError(cErr);
-                    if (nErr || eErr || pErr || cErr) return;
-                    await auth.signUp({ name: fullName.trim(), email, password, passwordConfirmation: confirmPassword, remember });
-                    push('Регистрация выполнена', 'success');
-                    close();
-                    open('signup-info');
-                  }
-                  
-                } catch (e: any) {
-                  if (e instanceof ApiError) {
-                    if (tab === 'login') {
-                      // Auth errors
-                      if (e.status === 401 || e.status === 404) {
-                        setLoginPasswordError('Неверные учетные данные');
-                        setLoginEmailError(null);
-                        return;
-                      }
-                      // Validation errors from backend (e.g. 422)
-                      if (e.errors) {
-                        const emailErr = e.errors.email?.[0] || null;
-                        const passwordErr = e.errors.password?.[0] || null;
-                        setLoginEmailError(emailErr);
-                        setLoginPasswordError(passwordErr);
-                        const firstMsg = emailErr || passwordErr || e.message || 'Ошибка запроса';
-                        push(firstMsg, 'error');
-                        return;
-                      }
-                      // Any other API error during login → show Russian generic message
-                      setLoginPasswordError('Неверные учетные данные');
-                      push('Такого пользователя не существует или введены неверные данные', 'error');
-                      return;
-                    } else {
-                      // Register: map server-side validation to specific fields
-                      if (e.errors) {
-                        const nameErr = e.errors.name?.[0] || null;
-                        const emailErr = e.errors.email?.[0] || null;
-                        const passwordErr = e.errors.password?.[0] || null;
-                        const confirmErr = e.errors.password_confirmation?.[0] || e.errors.passwordConfirmation?.[0] || null;
-                        setRegNameError(nameErr);
-                        setRegEmailError(emailErr);
-                        setRegPasswordError(passwordErr);
-                        setRegConfirmError(confirmErr);
-                        const firstMsg = nameErr || emailErr || passwordErr || confirmErr || e.message || 'Ошибка запроса';
-                        push(firstMsg, 'error');
-                        return;
-                      }
-                    }
-                    // Fallback for API errors without field details
-                    push('Ошибка запроса', 'error');
-                    return;
-                  }
-                  // Non-API unexpected error
-                  push('Ошибка запроса', 'error');
-                }
-              }}
+              type="submit"
+              onClick={handleSubmit}
               style={{ background:'#ffffff', color:'#111827', borderRadius: 10, height: 44, fontFamily:'Comfortaa', fontWeight: 600 }}
             >{tab==='login' ? 'Войти' : 'Создать аккаунт'}</Button>
 
@@ -404,6 +370,7 @@ export const AuthModals: React.FC = () => {
             <div style={{ height: 1, background:'rgba(255,255,255,0.12)', margin:'10px 0' }} />
             <button onClick={() => open('reset-password')} style={{ background:'transparent', border:'none', color:'#9ca3af', alignSelf:'center', cursor:'pointer' }}>Забыли пароль?</button>
           </div>
+          </form>
         </div>
       </Modal>
 
