@@ -8,9 +8,9 @@ import { LogoSvg } from '../ui/LogoSvg';
 import { useToast } from '../../app/providers/ToastProvider';
 import { BurgerMenu } from '../ui/BurgerMenu';
 
-type Props = { translucent?: boolean; embedded?: boolean };
+type Props = { translucent?: boolean; embedded?: boolean; appearance?: 'default' | 'game' };
 
-export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
+export const SiteHeader: React.FC<Props> = ({ translucent, embedded, appearance = 'default' }) => {
   const { user, signOut } = useAuth();
   const { open } = useModal();
   const navigate = useNavigate();
@@ -85,10 +85,10 @@ export const SiteHeader: React.FC<Props> = ({ translucent, embedded }) => {
 
   const bar = (
     <>
-      <div className="nav-bar">
+      <div className={`nav-bar${appearance === 'game' ? ' game' : ''}`}>
         <div className="nav-logo">
           <Link to="/" className="logo-link" aria-label="Stresshelp">
-            <span className="logo-desktop"><LogoSvg variant="color" /></span>
+            <span className="logo-desktop"><LogoSvg variant={appearance === 'game' ? 'invers' : 'color'} /></span>
           </Link>
         </div>
         <div className="nav-center">

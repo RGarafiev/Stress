@@ -199,6 +199,21 @@ header {
   box-sizing: border-box;
 }
 
+/* Game header appearance: darker pill like the collapse toggle; light text */
+.nav-bar.game {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+.nav-bar.game .nav-chip,
+.nav-bar.game .logo-link,
+.nav-bar.game .cta-try-now {
+  color: #ffffff;
+}
+.nav-bar.game .cta-try-now {
+  background: rgba(255,255,255,0.12) !important;
+  border: 1px solid rgba(255,255,255,0.25) !important;
+}
+
 /* 500–1539px: добавляем боковые отступы, чтобы хедер не прилипал к краям */
 @media (min-width: 500px) and (max-width: 1539px) {
   .nav-bar { width: calc(100% - 64px); }

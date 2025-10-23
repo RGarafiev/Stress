@@ -130,7 +130,11 @@ export const ArticlesSection: React.FC = () => {
         </div>
 
         {/* Center logo */}
-        <ArticlesLogo style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 3 }} />
+        <img
+          src={process.env.PUBLIC_URL + '/images/logos/Logo-StressHelp-color.svg'}
+          alt="StressHelp"
+          style={{ position: 'absolute', left: '50%', top: '50%', transform: 'translate(-50%, -50%)', zIndex: 3, width: 'clamp(120px, 13vw, 220px)', height: 'auto', display: 'block' }}
+        />
 
         <a className="articles-corner" href="https://stresshelp.ru/stati-i-video/" target="_blank" rel="noopener noreferrer" aria-label="Статьи и видео — StressHelp">
           <CornerArrowSvg />
