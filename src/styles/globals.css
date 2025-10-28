@@ -202,6 +202,7 @@ header {
 /* Game header appearance: darker pill like the collapse toggle; light text */
 .nav-bar.game {
   background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,0.25);
 }
 .nav-bar.game .nav-chip,
