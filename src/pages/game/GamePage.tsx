@@ -14,13 +14,9 @@ export const GamePage: React.FC = () => {
   const location = useLocation();
   const { open } = useModal();
 
-  // Gate entry: only allow when navigated from CTA with state.entry (any CTA button)
+  // Allow entry for already authenticated users even without explicit CTA state.
+  // If not authenticated, try to restore session; if fails — redirect to home and show login.
   useEffect(() => {
-    const cameFromCta = !!(location.state as any)?.entry;
-    if (!cameFromCta) {
-      navigate('/', { replace: true });
-      return;
-    }
     const check = async () => {
       if (!user) {
         const ok = await ensureAuthenticated();
@@ -31,7 +27,8 @@ export const GamePage: React.FC = () => {
       }
     };
     void check();
-  }, [user, navigate, open, ensureAuthenticated, location.state]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, navigate, open, ensureAuthenticated]);
 
   if (!user) return null;
   return <GameCanvas />;
@@ -188,7 +185,10 @@ const GameCanvas: React.FC = () => {
               top,
               left: '50%',
               transform: 'translateX(-50%)',
-              zIndex: 1002,
+              // Стрелка должна быть ПОД шапкой и её оверлеями (бургер-меню)
+              // Хедер в GameCanvas находится в контейнере с z-index: 1000,
+              // поэтому делаем кнопку ниже 1000, но выше канваса Unity (100).
+              zIndex: 999,
               width: toggleWidth,
               height: toggleHeight,
               borderRadius: 9999,
