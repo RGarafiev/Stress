@@ -151,7 +151,7 @@ const GameCanvas: React.FC = () => {
       top: 0,
       left: 0,
       width: '100%',
-      height: '100vh',
+      height: '100%',
       backgroundColor: '#000',
       overflow: 'hidden',
       zIndex: 1
@@ -250,7 +250,7 @@ const GameCanvas: React.FC = () => {
         <Unity 
           unityProvider={unityProvider} 
           style={{ 
-            width: '100%', 
+            width: '100%',
             height: '100%',
             display: 'block',
             position: 'absolute',
