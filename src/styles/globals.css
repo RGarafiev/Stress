@@ -1327,6 +1327,44 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   transform: translate(var(--about-outline-x, 0px), var(--about-outline-y, 0px)) rotate(var(--about-outline-rotate, 0deg));
 }
 
+/* Подпись под портретом */
+.about-person-caption {
+  position: absolute;
+  left: 62%;
+  top: 418px;             
+  transform: translateX(-50%);
+  width: 429px;           
+  min-height: 144px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center; 
+  align-items: center;
+  padding: 30px;          
+  gap: 10px;
+  background: #22D4EA;
+  border-radius: 35px;
+  color: #ffffff;
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  letter-spacing: -0.5px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  text-align: left;
+  z-index: 4;
+}
+
+/* Текст внутри подписи (управляем кеглем отдельно от контейнера) */
+.about-person-text {
+  font-family: 'Comfortaa', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 18px;
+  letter-spacing: -0.5px;
+}
+
 .about-content {
   margin-left: 35px;
   position: relative;
@@ -1396,6 +1434,18 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
     width: 310px;
     height: 330px;
   }
+
+  .about-person-caption {
+    left: 64%;           /* держим под портретом справа */
+    top: 336px;          /* чуть выше и ближе к животу */
+    transform: translateX(-50%);
+    width: 420px;
+    min-height: 128px;
+    font-size: 16px;
+    letter-spacing: -0.5px;
+    padding: 26px;
+  }
+  .about-person-text { font-size: 16px; line-height: 18px; letter-spacing: -0.5px; }
   
   .about-content {
     margin-left: 20px;
@@ -1455,6 +1505,19 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
     width: 210px;
     height: 230px;
   }
+
+  .about-person-caption {
+    left: 50%;
+    top: 200px;          /* выше, примерно уровень живота */
+    transform: translateX(-50%);
+    width: 280px;
+    min-height: 140px;
+    font-size: 14px;
+    line-height: 14px;
+    letter-spacing: -0.4px;
+    padding: 20px 24px;
+  }
+  .about-person-text { font-size: 14px; line-height: 17px; letter-spacing: -0.3px; }
   
   .about-content {
     margin-left: 0;
@@ -1484,8 +1547,10 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
     top: -186px;
     transform: translate(var(--about-behind-x, 0px), var(--about-behind-y, 0px)) rotate(var(--about-behind-rotate, 0deg)) scale(1.12);
   }
-  .about-person-image { left: 99px; width: 242px; height: 264px; }
-  .about-person-outline { left: 102px; width: 231px; height: 256px; }
+  .about-person-image { left: 95px; width: 260px; height: 284px; }
+  .about-person-outline { left: 98px; width: 248px; height: 274px; }
+  .about-person-caption { left: 50%; top: 220px; transform: translateX(-50%); width: 280px; min-height: 132px; font-size: 12px; line-height: 15px; letter-spacing: 0; padding: 22px 24px; }
+  .about-person-text { font-size: 14px; line-height: 17px; letter-spacing: -0.3px; }
 }
 
 @media (max-width: 480px) {
@@ -1525,16 +1590,30 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   }
   
   .about-person-image {
-    left: 50px;
-    width: 160px;
-    height: 180px;
+    left: 46px;
+    width: 176px;
+    height: 198px;
   }
   
   .about-person-outline {
-    left: 60px;
-    width: 150px;
-    height: 170px;
+    left: 58px;
+    width: 165px;
+    height: 187px;
   }
+
+  .about-person-caption {
+    left: 47%;
+    top: 160px;          
+    transform: translateX(-50%);
+    width: 215px;
+    min-height: 120px;
+    font-size: 11px;
+    line-height: 13px;
+    letter-spacing: 0;
+    padding: 16px 18px;
+  }
+
+  .about-person-text { font-size: 9px; line-height: 16px; letter-spacing: -0.3px; }
   
   .about-label {
     margin-bottom: 16px;

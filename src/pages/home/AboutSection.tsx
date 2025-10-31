@@ -17,7 +17,7 @@ export const AboutSection: React.FC = () => {
   const { elementRef: subtitleRef, shouldAnimate: subtitleShouldAnimate } = useFadeIn<HTMLParagraphElement>({ delay: 400 });
   const { elementRef: buttonRef, shouldAnimate: buttonShouldAnimate } = useFadeIn<HTMLDivElement>({ delay: 600 });
 
-  // Mobile blob controls: tweak these numbers to fine-tune positions on mobile
+
   const MOBILE_BLOBS = {
     tabletDown: {
       light: { dx: -80, dy: -20, rotate: 0, width: 400, height: 270 },
@@ -94,6 +94,13 @@ export const AboutSection: React.FC = () => {
 
             {/* Обводка вокруг портрета: верх ~30px над головой, низ по линии торса */}
             <PersonOutline className="about-person-outline" style={blobStyles.outline} />
+            {/* Подпись под портретом */}
+            <div className="about-person-caption">
+              <div className="about-person-text">
+                Мотовилин Олег,<br/>
+                кандидат психологических наук, доцент. Клинический психолог, специалист в сфере эмоциональных и личностных нарушений.
+              </div>
+            </div>
           </div>
         </Col>
         <Col span={6} smSpan={4} className="about-content">
