@@ -1366,7 +1366,7 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
 }
 
 .about-content {
-  margin-left: 35px;
+  padding-left: 120px; /* используем padding вместо margin для grid колонки */
   position: relative;
   z-index: 10;
   margin-top: 90px;
@@ -1381,28 +1381,90 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   margin-top: 25px;
 }
 
-/* About responsive */
-/* Narrow desktop 1360px–769px: move portrait to the right column visually and shrink 2x */
+
+.about-cta {
+  line-height: 1.05em !important; 
+  padding: 16px 40px !important; 
+  white-space: normal !important; 
+  word-wrap: break-word !important;
+}
+
+@media (min-width: 1380px) and (max-width: 1475px) {
+  .about-person-caption {
+    left: 65%; 
+    transform: translateX(-45%); 
+  }
+}
+
+
 @media (max-width: 1360px) and (min-width: 769px) {
   .about-visual { order: 2; }
-  .about-content { order: 1; margin-left: 0; }
-  /* approx original size minus ~50px; shift ~30% левее и ~10% ниже. Добавлен правый отступ */
+  .about-content { 
+    order: 1; 
+    padding-left: 120px; 
+    margin-top: 0; 
+  }
+
   .about-image-container { transform: translate(-30%, 10%) scale(0.94); transform-origin: right top; margin-left: auto; margin-right: 24px; }
-  /* reset internal offsets to desktop defaults so scaling behaves predictably */
+
   .about-blob-behind { left: 400px; }
   .about-person-image { left: 220px; }
   .about-person-outline { left: 230px; }
+
+  .about-person-caption {
+    left: 70%; 
+    transform: translateX(-40%); 
+  }
 }
 
-/* ≤890px (но >768px): ещё левее и на 10% меньше */
+@media (max-width: 1366px) and (min-width: 1201px) {
+  .about-content {
+    padding-left: 110px;
+  }
+
+  .about-person-caption {
+    left: 68%; 
+    transform: translateX(-42%); 
+  }
+}
+
+
+@media (max-width: 1200px) and (min-width: 1025px) {
+  .about-content {
+    padding-left: 100px;
+  }
+ 
+  .about-person-caption {
+    left: 69%; 
+    transform: translateX(-40%); 
+  }
+}
+
+
 @media (max-width: 890px) and (min-width: 769px) {
-  /* Сильнее уводим влево и чуть уменьшаем, добавляем безопасный отступ справа */
+
   .about-image-container { transform: translate(-50%, 12%) scale(0.78); transform-origin: right top; margin-left: auto; margin-right: 40px; }
   .about-visual { overflow: visible; }
+  .about-content {
+    padding-left: 100px; 
+  }
+
+  .about-person-caption {
+    left: 72%; 
+    transform: translateX(-35%); /* изменено для дополнительного сдвига вправо */
+  }
 }
 /* 1100–891px: ещё чуть меньше и добавим больше пространства справа */
 @media (max-width: 1100px) and (min-width: 891px) {
   .about-image-container { transform: translate(-40%, 12%) scale(0.84); transform-origin: right top; margin-left: auto; margin-right: 36px; }
+  .about-content {
+    padding-left: 100px; /* увеличен padding для предотвращения съезжания влево */
+  }
+  /* Сдвигаем блок с текстом под портретом правее */
+  .about-person-caption {
+    left: 71%; /* увеличено для сдвига вправо */
+    transform: translateX(-38%); /* изменено для дополнительного сдвига вправо */
+  }
 }
 @media (max-width: 1024px) and (min-width: 769px) {
   .about-image-container {
@@ -1436,9 +1498,9 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   }
 
   .about-person-caption {
-    left: 64%;           /* держим под портретом справа */
+    left: 72%;           /* увеличено с 64% для сдвига вправо */
     top: 336px;          /* чуть выше и ближе к животу */
-    transform: translateX(-50%);
+    transform: translateX(-35%); /* изменено с -50% для дополнительного сдвига вправо */
     width: 420px;
     min-height: 128px;
     font-size: 16px;
@@ -1448,8 +1510,20 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .about-person-text { font-size: 16px; line-height: 18px; letter-spacing: -0.5px; }
   
   .about-content {
-    margin-left: 20px;
+    padding-left: 100px; /* увеличен padding для предотвращения съезжания влево */
     margin-top: 60px;
+  }
+}
+
+/* 900px–890px: промежуточный диапазон */
+@media (max-width: 900px) and (min-width: 891px) {
+  .about-content {
+    padding-left: 100px;
+  }
+  /* Сдвигаем блок с текстом под портретом правее */
+  .about-person-caption {
+    left: 71%; /* увеличено для сдвига вправо */
+    transform: translateX(-37%); /* изменено для дополнительного сдвига вправо */
   }
 }
 
@@ -1459,13 +1533,21 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .about-sub { font-size: 16px; max-width: 100%; }
   
   /* Порядок: сначала текст, затем портрет */
-  .about-content { order: 1; }
-  .about-visual { order: 2; }
+  .about-content { 
+    order: 1; 
+    padding-left: 0; /* на мобильных без отступа */
+    margin-top: 0;
+    margin-bottom: 40px; /* добавляем отступ снизу от текста */
+  }
+  .about-visual { 
+    order: 2; 
+    margin-top: 40px; /* добавляем отступ сверху от портрета */
+  }
   .about-image-container {
     width: 100%;
-    max-width: 400px;
-    height: 300px;
-    margin: 100px auto 32px auto;
+    max-width: 460px;
+    height: 380px;
+    margin: 40px auto 32px auto; /* уменьшаем верхний margin со 100px до 40px */
     transform: none; /* на планшетах/мобилках — без сдвига */
   }
   /* Mobile-only tuning knobs (tablet/phones ≤768px) */
@@ -1495,34 +1577,29 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   }
   
   .about-person-image {
-    left: 90px;
-    width: 220px;
-    height: 240px;
+    left: 70px;
+    width: 280px;
+    height: 300px;
   }
   
   .about-person-outline {
-    left: 100px;
-    width: 210px;
-    height: 230px;
+    left: 78px;
+    width: 268px;
+    height: 288px;
   }
 
   .about-person-caption {
-    left: 50%;
-    top: 200px;          /* выше, примерно уровень живота */
+    left: 46%;
+    top: 240px;          /* выше, примерно уровень живота */
     transform: translateX(-50%);
-    width: 280px;
-    min-height: 140px;
-    font-size: 14px;
-    line-height: 14px;
+    width: 340px;
+    min-height: 160px;
+    font-size: 16px;
+    line-height: 18px;
     letter-spacing: -0.4px;
-    padding: 20px 24px;
+    padding: 24px 28px;
   }
-  .about-person-text { font-size: 14px; line-height: 17px; letter-spacing: -0.3px; }
-  
-  .about-content {
-    margin-left: 0;
-    margin-top: 0;
-  }
+  .about-person-text { font-size: 16px; line-height: 19px; letter-spacing: -0.3px; }
   
   .about-label {
     margin-bottom: 24px;
@@ -1533,13 +1610,21 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   }
 }
 
-/* Tablet-small (481–767px): use mobile composition but scale ~10% up to keep presence,
-   and nudge blobs so they don't "slip" */
+
 @media (min-width: 481px) and (max-width: 767px) {
+  .about-content {
+    padding-left: 0; 
+    margin-bottom: 50px; 
+  }
+  
+  .about-visual {
+    margin-top: 50px;
+  }
+  
   .about-image-container {
-    max-width: 440px;
-    height: 330px;
-    margin: 80px auto 32px auto;
+    max-width: 500px;
+    height: 400px;
+    margin: 50px auto 32px auto; /* уменьшаем верхний margin с 80px до 50px */
   }
   .about-light-blob { width: 440px; height: 297px; }
   .about-blob-behind {
@@ -1547,10 +1632,10 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
     top: -186px;
     transform: translate(var(--about-behind-x, 0px), var(--about-behind-y, 0px)) rotate(var(--about-behind-rotate, 0deg)) scale(1.12);
   }
-  .about-person-image { left: 95px; width: 260px; height: 284px; }
-  .about-person-outline { left: 98px; width: 248px; height: 274px; }
-  .about-person-caption { left: 50%; top: 220px; transform: translateX(-50%); width: 280px; min-height: 132px; font-size: 12px; line-height: 15px; letter-spacing: 0; padding: 22px 24px; }
-  .about-person-text { font-size: 14px; line-height: 17px; letter-spacing: -0.3px; }
+  .about-person-image { left: 75px; width: 320px; height: 344px; }
+  .about-person-outline { left: 78px; width: 308px; height: 334px; }
+  .about-person-caption { left: 46%; top: 260px; transform: translateX(-50%); width: 340px; min-height: 152px; font-size: 16px; line-height: 18px; letter-spacing: 0; padding: 26px 28px; }
+  .about-person-text { font-size: 16px; line-height: 19px; letter-spacing: -0.3px; }
 }
 
 @media (max-width: 480px) {
@@ -1558,11 +1643,21 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   .about-title { font-size: 36px; }
   .about-sub { font-size: 14px; }
   
+  .about-content {
+    padding-left: 0; /* на мобильных без отступа */
+    margin-bottom: 30px; /* отступ снизу от текста */
+  }
+  
+  .about-visual {
+    margin-top: 30px; /* отступ сверху от портрета */
+  }
+  
   .about-image-container {
     width: 100%;
-    max-width: 300px;
-    height: 250px;
-    margin: 100px auto 24px auto;
+    max-width: 360px;
+    height: 320px;
+    margin: 30px auto 24px auto;
+    position: relative;
   }
   /* Small phones adjustments (≤480px) */
   .about {
@@ -1590,30 +1685,30 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   }
   
   .about-person-image {
-    left: 46px;
-    width: 176px;
-    height: 198px;
+    left: 20px;
+    width: 240px;
+    height: 270px;
   }
   
   .about-person-outline {
-    left: 58px;
-    width: 165px;
-    height: 187px;
+    left: 32px;
+    width: 228px;
+    height: 258px;
   }
 
   .about-person-caption {
-    left: 47%;
-    top: 160px;          
-    transform: translateX(-50%);
-    width: 215px;
-    min-height: 120px;
-    font-size: 11px;
-    line-height: 13px;
+    left: 50%; 
+    top: 210px;          
+    transform: translateX(-50%); 
+    width: 280px;
+    min-height: 145px;
+    font-size: 14px;
+    line-height: 16px;
     letter-spacing: 0;
-    padding: 16px 18px;
+    padding: 20px 24px;
   }
 
-  .about-person-text { font-size: 9px; line-height: 16px; letter-spacing: -0.3px; }
+  .about-person-text { font-size: 14px; line-height: 18px; letter-spacing: -0.3px; }
   
   .about-label {
     margin-bottom: 16px;
@@ -1624,7 +1719,58 @@ header.solid .cta-try-now { background: #fff !important; color: #121212 !importa
   }
 }
 
-/* Phone large (400–480px): чуть крупнее вся композиция (~+12%) */
+/* Для диапазона 369-479px: жесткое центрирование мужика и текста */
+@media (max-width: 479px) and (min-width: 369px) {
+  .about.container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+  }
+  
+  .about .grid {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .about-visual {
+    width: 100% !important;
+    max-width: 360px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    grid-column: 1 / -1 !important;
+    justify-self: center !important;
+    transform: translateX(0) !important;
+  }
+  
+  .about-image-container {
+    margin: 30px auto 24px auto !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+    width: 100% !important;
+    max-width: 360px !important;
+    transform: translateX(40px) !important; /* сдвигаем вправо */
+  }
+  
+  .about-person-caption {
+    left: 41% !important; /* уменьшено с 50% для сдвига влево */
+    transform: translateX(-50%) !important;
+    position: absolute !important;
+  }
+}
+
 @media (min-width: 400px) and (max-width: 480px) {
   .about-image-container {
     transform: scale(1.12);
